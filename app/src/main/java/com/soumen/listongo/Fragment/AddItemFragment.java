@@ -1,0 +1,261 @@
+package com.soumen.listongo.Fragment;
+
+import static android.app.Activity.RESULT_OK;
+
+import static com.google.android.material.internal.ViewUtils.hideKeyboard;
+
+import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.ContentResolver;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
+import android.os.Bundle;
+
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+
+import android.provider.MediaStore;
+import android.provider.OpenableColumns;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.Toast;
+
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.MaterialAutoCompleteTextView;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.gson.Gson;
+import com.soumen.listongo.ApiClient;
+import com.soumen.listongo.ApiService;
+import com.soumen.listongo.R;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+
+public class AddItemFragment extends Fragment {
+    public AddItemFragment() {
+    }
+
+    TextInputEditText edtTitle, edtDescription, edtPrice;
+    MaterialAutoCompleteTextView dropCategory;
+    ImageView productImageView;
+    MaterialButton uploadButton, submitButton;
+    private final int gallary_code = 1000;
+    private Uri imageUri;
+    String item;
+    Long userId;
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_add_item, container, false);
+        edtTitle = view.findViewById(R.id.titleEditText);
+        edtDescription = view.findViewById(R.id.descriptionEditText);
+        edtPrice = view.findViewById(R.id.priceEditText);
+        dropCategory = view.findViewById(R.id.categoryDropdown);
+        productImageView = view.findViewById(R.id.productImageView);
+        uploadButton = view.findViewById(R.id.uploadButton);
+        submitButton = view.findViewById(R.id.submitButton);
+
+        userId=getArguments().getLong("UserId");
+
+        uploadButton.setOnClickListener(v -> {
+            Intent image = new Intent(Intent.ACTION_PICK);
+            image.setData(MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            startActivityForResult(image, gallary_code);
+        });
+
+        submitButton.setOnClickListener(v -> {
+            if (edtTitle.getText().toString() == null || edtTitle.getText().toString().isEmpty() ||
+                    edtDescription.getText().toString() == null || edtDescription.getText().toString().isEmpty() ||
+                    edtPrice.getText().toString() == null || edtPrice.getText().toString().isEmpty() ||
+                    dropCategory.getText().toString() == null || dropCategory.getText().toString().isEmpty() ||
+                    productImageView == null) {
+                return;
+            }
+
+            addProduct();
+        });
+
+        String[] categories = {"Soft Drinks", "Sweets & Chips", "Fresh Vegetable", "Fresh Fruits", "Dry Fruits", "Flowers & Leaves", "Body Care", "Exotics", "Coriander & Others", "Dairy, Brade & Eggs", "Electronics", "Atta, Rice & Dal", "Bakery & Brade", "Puja Store"};
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), R.layout.drop_down_item, categories);
+        dropCategory.setAdapter(adapter);
+
+        dropCategory.setOnTouchListener((v, e) -> {
+            if (e.getAction() == MotionEvent.ACTION_DOWN) {
+                hideKeyboard(requireActivity());
+            }
+            return false;
+        });
+
+
+        dropCategory.setOnItemClickListener(((adapterView, view1, i, l) -> {
+            item = adapterView.getItemAtPosition(i).toString();
+            Toast.makeText(getContext(), "item= " + item, Toast.LENGTH_SHORT).show();
+        }));
+
+        return view;
+    }
+
+    public void hideKeyboard(FragmentActivity fragmentActivity) {
+        View view = fragmentActivity.getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager)
+                    fragmentActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == RESULT_OK && requestCode == gallary_code && data != null) {
+            Uri selectedImageUri = data.getData();
+
+            if (selectedImageUri != null) {
+                productImageView.setImageURI(selectedImageUri);
+
+                // Save the image Uri for later use in addProduct()
+                imageUri = selectedImageUri;  // declare imageUri as a class-level variable
+            }
+        }
+    }
+
+
+    public void addProduct() {
+        if (imageUri == null) {
+            return;
+        }
+
+        try {
+            ApiService apiService = ApiClient.getInstance().create(ApiService.class);
+
+            // 1. Collect product data
+            String title = edtTitle.getText().toString();
+            String description = edtDescription.getText().toString();
+            double price = Double.parseDouble(edtPrice.getText().toString());
+
+            // 2. Create product object
+            AddProductModel product = new AddProductModel();
+            product.setTitle(title);
+            product.setDescription(description);
+            product.setPrice(price);
+            product.setCategory(item);
+
+            // 3. Convert product to JSON
+            Gson gson = new Gson();
+            String json = gson.toJson(product);
+            RequestBody productBody = RequestBody.create(json, MediaType.parse("application/json"));
+
+            // 4. Prepare image part from Uri
+            ContentResolver contentResolver = getContext().getContentResolver();
+
+            // Get MIME type (e.g., "image/png", "image/jpeg")
+            String mimeType = contentResolver.getType(imageUri);
+
+            // Get file name from Uri
+            String fileName = getFileNameFromUri(imageUri);
+
+            // Read image bytes
+            InputStream inputStream = contentResolver.openInputStream(imageUri);
+            byte[] imageBytes = getBytes(inputStream);
+
+            // Create request body and part
+            RequestBody imageBody = RequestBody.create(imageBytes, MediaType.parse(mimeType));
+            MultipartBody.Part imagePart = MultipartBody.Part.createFormData("image", fileName, imageBody);
+
+            // 6. Send the request
+            Call<ResponseBody> call = apiService.addProduct(productBody, imagePart, userId);
+
+            call.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if (response.isSuccessful()) {
+                        Toast.makeText(getContext(), "Done", Toast.LENGTH_SHORT).show();
+                        edtTitle.setText("");
+                        edtDescription.setText("");
+                        edtPrice.setText("");
+                        dropCategory.setText("");
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+
+                        builder.setTitle("Add Successfully")
+                                .setMessage("Your Product was added successfully.\nIt will be listed after approval by the admin.")
+                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        dialogInterface.dismiss(); // Dismiss the dialog properly
+                                    }
+                                });
+
+                        AlertDialog dialog = builder.create(); // Use AlertDialog type
+                        dialog.show();
+                    } else {
+                        Log.e("Upload", "Server Error: " + response.errorBody());
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    Log.e("Upload", "Failure: " + t.getMessage());
+                }
+            });
+
+        } catch (Exception e) {
+            Log.e("Upload", "Exception: " + e.getMessage());
+        }
+    }
+
+    private byte[] getBytes(InputStream inputStream) throws IOException {
+        ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
+        int bufferSize = 1024;
+        byte[] buffer = new byte[bufferSize];
+
+        int len;
+        while ((len = inputStream.read(buffer)) != -1) {
+            byteBuffer.write(buffer, 0, len);
+        }
+
+        return byteBuffer.toByteArray();
+    }
+
+    @SuppressLint("Range")
+    private String getFileNameFromUri(Uri uri) {
+        String result = null;
+        if (uri.getScheme().equals("content")) {
+            Cursor cursor = getContext().getContentResolver().query(uri, null, null, null, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                cursor.close();
+            }
+        }
+        if (result == null) {
+            result = uri.getLastPathSegment();
+        }
+        return result;
+    }
+
+
+}

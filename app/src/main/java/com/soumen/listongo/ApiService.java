@@ -1,0 +1,76 @@
+package com.soumen.listongo;
+
+import com.soumen.listongo.ForAdmin.AdminProductModel;
+import com.soumen.listongo.Fragment.ProductListModel;
+
+import java.util.List;
+
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.http.*;
+
+public interface ApiService {
+
+    @POST("user/signup")
+    Call<ResponseBody> signUpUser(@Body SignUpUserModel signUpUserModel);
+
+    @POST("user/login")
+    Call<ResponseBody> loginUser(@Body LogInUserModel logInUser);
+
+    @GET("product/get-all-product")
+    Call<List<ProductListModel>> getAllProducts();
+
+    @Multipart
+    @POST("product/add-product")
+    Call<ResponseBody> addProduct(
+            @Part("productModel") RequestBody productModelJson,
+            @Part MultipartBody.Part image,
+            @Query("userId") Long userId
+    );
+
+    @GET("product/get-filter-product")
+    Call<List<ProductListModel>> getProductByCategory(
+            @Query("category") String category
+    );
+
+    @GET("product/get-filter-product")
+    Call<List<ProductListModel>> getProductByTitle(
+            @Query("title") String title);
+
+    @GET("product/for-admin")
+    Call<List<AdminProductModel>> AdminList();
+
+    @PUT("product/make-for-user")
+    Call<ResponseBody> makeUserProduct(
+            @Query("imaId") Long id
+    );
+
+    @GET("user/isAdmin")
+    Call<ResponseBody> isAdmin(
+            @Query("email") String email
+    );
+
+    @GET("user/user-name")
+    Call<ResponseBody> fetchUsername(
+            @Query("id") Long id
+    );
+
+    //OTP
+    @POST("user/send-otp")
+    Call<ResponseBody> sendAndStoreOTP(
+            @Query("otp") String otp,
+            @Query("email") String email
+    );
+
+    @PUT("user/use-otp")
+    Call<ResponseBody> useOTP(
+            @Query("email") String email
+    );
+
+    @GET("user/check-otp")
+    Call<ResponseBody>checkOtp(
+            @Query("email") String email
+    );
+}

@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">ListOnGo</string>
+    <string name="server_api">http://192.168.50.150:8080/api</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>

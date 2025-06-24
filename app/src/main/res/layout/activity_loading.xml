@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="50dp"
+    tools:context=".LoadingActivity">
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/lottieView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:lottie_rawRes="@raw/lottie_load"
+        app:lottie_autoPlay="true"
+        android:visibility="visible"
+        app:lottie_loop="true" />
+
+    <!-- Invisible ImageView -->
+    <ImageView
+        android:id="@+id/info_image"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/servererror"
+        android:visibility="gone"
+        android:layout_centerInParent="true"/>
+    <!-- Invisible TextView -->
+
+    <!-- Invisible Material Button 1 -->
+    <TextView
+        android:id="@+id/info_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/info_image"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="-40dp"
+        android:text="Server is Offline"
+        android:textColor="#FF0000"
+        android:textSize="18sp"
+        android:visibility="gone"
+        android:textStyle="bold" />
+
+    <!-- Invisible Material Button 2 -->
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/retry_button"
+        style="@style/Widget.Material3.Button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/info_text"
+        android:layout_centerInParent="true"
+        android:layout_marginBottom="-68dp"
+        app:cornerRadius="10dp"
+        android:visibility="gone"
+        android:text="Retry"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/request_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Request"
+        style="@style/Widget.Material3.Button.OutlinedButton"
+       android:layout_alignBottom="@+id/retry_button"
+        android:layout_marginBottom="-60dp"
+        android:visibility="gone"
+        app:cornerRadius="10dp"/>
+
+</RelativeLayout>
