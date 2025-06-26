@@ -70,7 +70,14 @@ public interface ApiService {
     );
 
     @GET("user/check-otp")
-    Call<ResponseBody>checkOtp(
-            @Query("email") String email
+    Call<ResponseBody> checkOtp(
+            @Query("email") String email,
+            @Query("otp") String otp
+    );
+
+    @PUT("user/reset-pass")
+    Call<ResponseBody> restPass(
+            @Query("email") String email,
+            @Query("password") String password
     );
 }

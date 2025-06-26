@@ -15,6 +15,8 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textview.MaterialTextView;
 
+import java.io.IOException;
+
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -52,15 +54,15 @@ public class SignUpActivity extends AppCompatActivity {
         });
 
 
-        btnGetOtp.setOnClickListener(v->{
-            String email=edtEmail.getText().toString();
+        btnGetOtp.setOnClickListener(v -> {
+            String email = edtEmail.getText().toString();
             Log.d("OTPEmail", email);
-            if ( email == null||email.isEmpty()) {
+            if (email == null || email.isEmpty()) {
                 edtEmail.setError("Enter email first.");
                 return;
             }
             generateOtp();
-            sendOtp(storeOTP,email);
+            sendOtp(storeOTP, email);
         });
 
         btnCreateAcc.setOnClickListener(v -> {
@@ -85,9 +87,9 @@ public class SignUpActivity extends AppCompatActivity {
         String email = edtEmail.getText().toString();
         String password = edtPassword.getText().toString();
         String username = edtUserName.getText().toString();
-        SignUpUserModel signUpUserModel = new SignUpUserModel(username,email, password );
-        ApiService apiService=ApiClient.getInstance().create(ApiService.class);
-        Call<ResponseBody> call=apiService.signUpUser(signUpUserModel);
+        SignUpUserModel signUpUserModel = new SignUpUserModel(username, email, password);
+        ApiService apiService = ApiClient.getInstance().create(ApiService.class);
+        Call<ResponseBody> call = apiService.signUpUser(signUpUserModel);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -97,9 +99,21 @@ public class SignUpActivity extends AppCompatActivity {
                     finish();
                 } else {
                     try {
-                        Toast.makeText(SignUpActivity.this, "Error: " + response.errorBody(), Toast.LENGTH_LONG).show();
-                    } catch (Exception e) {
+                        String errorMessage = response.errorBody().string();
+
+                        if (errorMessage.contains("Username")) {
+                            edtUserName.setError("This username is already taken");
+                        } else if (errorMessage.contains("Email")) {
+                            edtEmail.setError("This email is already registered");
+                        } else {
+                            Toast.makeText(SignUpActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+                        }
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        Toast.makeText(SignUpActivity.this, "Server error", Toast.LENGTH_SHORT).show();
                     }
+
                 }
             }
 
@@ -167,15 +181,15 @@ public class SignUpActivity extends AppCompatActivity {
         return true;
     }
 
-    public void generateOtp(){
-        int randomOtp= (int)(Math.random() * 900000) + 100000;
-        storeOTP=String.valueOf(randomOtp);
+    public void generateOtp() {
+        int randomOtp = (int) (Math.random() * 900000) + 100000;
+        storeOTP = String.valueOf(randomOtp);
     }
 
 
-    private void sendOtp(String otp,String email){
-        ApiService apiService=ApiClient.getInstance().create(ApiService.class);
-        Call<ResponseBody> send =apiService.sendAndStoreOTP(otp,email);
+    private void sendOtp(String otp, String email) {
+        ApiService apiService = ApiClient.getInstance().create(ApiService.class);
+        Call<ResponseBody> send = apiService.sendAndStoreOTP(otp, email);
         send.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -189,36 +203,37 @@ public class SignUpActivity extends AppCompatActivity {
         });
     }
 
-    private  void  checkOtp(String email){
-        ApiService apiService=ApiClient.getInstance().create(ApiService.class);
-        Call<ResponseBody> checkThis=apiService.checkOtp(email);
-        checkThis.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                boolean otpCheck=Boolean.parseBoolean(response.body().toString());
-                if (!otpCheck) {
-                    Call<ResponseBody> useThis=apiService.useOTP(email);
-                    useThis.enqueue(new Callback<ResponseBody>() {
-                        @Override
-                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                            Toast.makeText(SignUpActivity.this, "Done", Toast.LENGTH_SHORT).show();
-                        }
-
-                        @Override
-                        public void onFailure(Call<ResponseBody> call, Throwable throwable) {
-                            Toast.makeText(SignUpActivity.this, "ERROR", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                }else {
-                    Toast.makeText(SignUpActivity.this, "OTP not matched.Try again", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable throwable) {
-                Toast.makeText(SignUpActivity.this, throwable.toString(), Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
+//    private  void  checkOtp(String email){
+//        ApiService apiService=ApiClient.getInstance().create(ApiService.class);
+//        Call<ResponseBody> checkThis=apiService.checkOtp(email);
+//        checkThis.enqueue(new Callback<ResponseBody>() {
+//            @Override
+//            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+//                boolean otpCheck=Boolean.parseBoolean(response.body().toString());
+//                if (!otpCheck) {
+//                    Call<ResponseBody> useThis=apiService.useOTP(email);
+//                    useThis.enqueue(new Callback<ResponseBody>() {
+//                        @Override
+//                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+//                            Toast.makeText(SignUpActivity.this, "Done", Toast.LENGTH_SHORT).show();
+//                        }
+//
+//                        @Override
+//                        public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+//                            Toast.makeText(SignUpActivity.this, "ERROR", Toast.LENGTH_SHORT).show();
+//                        }
+//                    });
+//                }else {
+//                    Toast.makeText(SignUpActivity.this, "OTP not matched.Try again", Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+//                Toast.makeText(SignUpActivity.this, throwable.toString(), Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//    }
+//
+//}
 }
