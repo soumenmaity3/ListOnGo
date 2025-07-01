@@ -5,6 +5,7 @@ public class AddProductModel {
     private String description;
     private double price;
     private String category;
+    private String nickName;
 
     public AddProductModel() {
     }
@@ -14,6 +15,14 @@ public class AddProductModel {
         this.description = description;
         this.price = price;
         this.category = category;
+    }
+
+    public String getNickName() {
+        return nickName;
+    }
+
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
     }
 
     public String getTitle() {

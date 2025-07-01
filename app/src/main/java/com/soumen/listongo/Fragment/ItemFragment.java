@@ -1,5 +1,8 @@
 package com.soumen.listongo.Fragment;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.material.appbar.MaterialToolbar;
@@ -21,6 +25,7 @@ import com.soumen.listongo.ApiClient;
 import com.soumen.listongo.ApiService;
 import com.soumen.listongo.ForCart.CartActivity;
 import com.soumen.listongo.R;
+import com.soumen.listongo.SettingsUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,6 +45,7 @@ public class ItemFragment extends Fragment {
     String api_url;
     TextInputEditText searchLayout;
     MaterialToolbar cart_tool;
+    ProgressBar itemProgress;
 
     public ItemFragment() {
     }
@@ -49,15 +55,16 @@ public class ItemFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_item, container, false);
-        api_url=getString(R.string.server_api);
-        searchLayout=view.findViewById(R.id.searchEditText);
+        api_url = getString(R.string.server_api);
+        searchLayout = view.findViewById(R.id.searchEditText);
+        itemProgress=view.findViewById(R.id.itemProgress);
         // Sidebar
         RecyclerView sidebar = view.findViewById(R.id.sidebarRecyclerView);
         sidebar.setLayoutManager(new LinearLayoutManager(getContext()));
-        cart_tool=view.findViewById(R.id.cart_tool);
+        cart_tool = view.findViewById(R.id.cart_tool);
 
-        cart_tool.setOnClickListener(v->{
-            Intent intent=new Intent(getContext(), CartActivity.class);
+        cart_tool.setOnClickListener(v -> {
+            Intent intent = new Intent(getContext(), CartActivity.class);
             startActivity(intent);
         });
 
@@ -65,6 +72,7 @@ public class ItemFragment extends Fragment {
                 new SidebarItem(R.drawable.fruit, "All"),
                 new SidebarItem(R.drawable.soft_drink, "Soft Drinks"),
                 new SidebarItem(R.drawable.snacks, "Sweets & Chips"),
+                new SidebarItem(R.drawable.brand, "Fashion"),
                 new SidebarItem(R.drawable.vegetables, "Fresh Vegetable"),
                 new SidebarItem(R.drawable.fresh_fruits, "Fresh Fruits"),
                 new SidebarItem(R.drawable.dried_fruits, "Dry Fruits"),
@@ -126,9 +134,12 @@ public class ItemFragment extends Fragment {
                 case 14:
                     itemByCategory(menuItems.get(position).title);
                     break;
+                case 15:
+                    itemByCategory(menuItems.get(position).title);
+                    break;
             }
         });
-        searchLayout.setOnEditorActionListener((v,id,event)->{
+        searchLayout.setOnEditorActionListener((v, id, event) -> {
             if (id == EditorInfo.IME_ACTION_DONE ||
                     (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN)) {
 
@@ -151,7 +162,7 @@ public class ItemFragment extends Fragment {
         // RecyclerView for product list
         recyclerView = view.findViewById(R.id.itemRecycleList);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new ItemListAdapter(getContext(),productList,api_url);
+        adapter = new ItemListAdapter(getContext(), productList, api_url);
         recyclerView.setAdapter(adapter);
 
         fetchProducts();
@@ -160,6 +171,7 @@ public class ItemFragment extends Fragment {
     }
 
     private void fetchProducts() {
+        itemProgress.setVisibility(VISIBLE);
         ApiService apiService = ApiClient.getInstance().create(ApiService.class);
         Call<List<ProductListModel>> call = apiService.getAllProducts();
 
@@ -170,6 +182,7 @@ public class ItemFragment extends Fragment {
                     productList.clear();
                     productList.addAll(response.body());
                     adapter.notifyDataSetChanged();
+                    itemProgress.setVisibility(GONE);
                 } else {
                     Toast.makeText(getContext(), "Failed to fetch products", Toast.LENGTH_SHORT).show();
                 }
@@ -182,13 +195,11 @@ public class ItemFragment extends Fragment {
         });
     }
 
-    public void onLongClick(int position) {
-        Toast.makeText(getContext(), "Filter By " + menuItems.get(position).title, Toast.LENGTH_SHORT).show();
-    }
 
-    public void itemByCategory( String category){
-        ApiService apiService=ApiClient.getInstance().create(ApiService.class);
-        Call<List<ProductListModel>> listItem=apiService.getProductByCategory(category);
+    public void itemByCategory(String category) {
+        itemProgress.setVisibility(VISIBLE);
+        ApiService apiService = ApiClient.getInstance().create(ApiService.class);
+        Call<List<ProductListModel>> listItem = apiService.getProductByCategory(category);
         listItem.enqueue(new Callback<List<ProductListModel>>() {
             @Override
             public void onResponse(Call<List<ProductListModel>> call, Response<List<ProductListModel>> response) {
@@ -196,6 +207,7 @@ public class ItemFragment extends Fragment {
                     productList.clear();
                     productList.addAll(response.body());
                     adapter.notifyDataSetChanged();
+                    itemProgress.setVisibility(GONE);
                 } else {
                     Toast.makeText(getContext(), "Failed to fetch products", Toast.LENGTH_SHORT).show();
                 }
@@ -208,16 +220,44 @@ public class ItemFragment extends Fragment {
         });
 
     }
-    public void getProductByTitle(String title){
-        ApiService apiService=ApiClient.getInstance().create(ApiService.class);
-        Call<List<ProductListModel>> productByTitle= apiService.getProductByTitle(title);
+
+    public void getProductByTitle(String title) {
+        itemProgress.setVisibility(VISIBLE);
+        ApiService apiService = ApiClient.getInstance().create(ApiService.class);
+        Call<List<ProductListModel>> productByTitle = apiService.getProductByTitle(title);
         productByTitle.enqueue(new Callback<List<ProductListModel>>() {
+            @Override
+            public void onResponse(Call<List<ProductListModel>> call, Response<List<ProductListModel>> response) {
+                if (response.isSuccessful() && response.body() != null && !response.body().isEmpty()) {
+                    productList.clear();
+                    productList.addAll(response.body());
+                    adapter.notifyDataSetChanged();
+                    itemProgress.setVisibility(GONE);
+                } else {
+                    getItemByNickName(title);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<ProductListModel>> call, Throwable throwable) {
+                itemProgress.setVisibility(GONE);
+                Toast.makeText(getContext(), "Error: " + throwable.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void getItemByNickName(String nickName){
+        itemProgress.setVisibility(VISIBLE);
+        ApiService apiService = ApiClient.getInstance().create(ApiService.class);
+        Call<List<ProductListModel>> getItemByNick=apiService.getProductByNickname(nickName);
+        getItemByNick.enqueue(new Callback<List<ProductListModel>>() {
             @Override
             public void onResponse(Call<List<ProductListModel>> call, Response<List<ProductListModel>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     productList.clear();
                     productList.addAll(response.body());
                     adapter.notifyDataSetChanged();
+                    itemProgress.setVisibility(GONE);
                 } else {
                     Toast.makeText(getContext(), "Failed to fetch products", Toast.LENGTH_SHORT).show();
                 }

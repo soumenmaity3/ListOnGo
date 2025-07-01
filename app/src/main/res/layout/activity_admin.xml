@@ -6,18 +6,29 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ForAdmin.AdminActivity">
-<androidx.recyclerview.widget.RecyclerView
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:id="@+id/adminPanel"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Empty(All is Done)"
-        android:textStyle="bold|italic"
-        android:layout_centerInParent="true"
-        android:textSize="30sp"
-        android:id="@+id/txtDone"
-        android:visibility="gone"/>
 
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbarAdmin"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="#E29595"
+        app:navigationIcon="@drawable/back"
+        app:subtitle="List those product"
+        app:subtitleTextColor="?android:attr/textColorSecondary"
+        app:title="Admin Panel"
+        app:titleTextColor="@color/black" />
+
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/adminTab"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/toolbarAdmin"
+        android:backgroundTint="#C87E7E" />
+
+    <androidx.viewpager.widget.ViewPager
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/adminTab"
+        android:id="@+id/viewPager"/>
 </RelativeLayout>

@@ -1,21 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
     tools:context=".Fragment.AddItemFragment">
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
+    <!-- Main content inside LinearLayout -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:padding="16dp"
         android:orientation="vertical"
-        android:gravity="center_horizontal"
-        android:paddingBottom="24dp"
-        android:layout_gravity="center">
+        android:gravity="center_horizontal">
 
-        <!-- Title -->
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -29,12 +30,27 @@
                 android:layout_height="wrap_content"
                 android:inputType="textCapSentences" />
         </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- Description -->
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Description"
+            android:layout_marginTop="12dp"
+            android:hint="Nick name like (Potato - Alu) (Optional)"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            app:boxBackgroundMode="outline">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/nickNameEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textCapSentences"
+                android:hint="@null" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Description (e.g., per kg or per quantity?)"
             android:layout_marginTop="12dp"
             style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
 
@@ -43,10 +59,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textMultiLine"
-                android:minLines="3" />
+                android:minLines="3"
+                android:maxLines="6"
+                android:gravity="top|start"
+                android:padding="8dp" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Price -->
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -61,8 +79,8 @@
                 android:inputType="numberDecimal" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Category Dropdown -->
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/dropdown_menu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
@@ -76,11 +94,9 @@
                 android:inputType="none"
                 android:textSize="18sp"
                 android:padding="16dp"
-                android:backgroundTint="?attr/colorPrimary"
-                />
+                android:backgroundTint="?attr/colorPrimary"/>
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Image Preview -->
         <ImageView
             android:id="@+id/productImageView"
             android:layout_width="150dp"
@@ -91,7 +107,6 @@
             android:contentDescription="Selected Product Image"
             android:src="@drawable/product" />
 
-        <!-- Upload Button -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/uploadButton"
             android:layout_width="wrap_content"
@@ -100,10 +115,11 @@
             android:layout_marginTop="12dp"
             style="@style/Widget.Material3.Button.OutlinedButton"
             app:icon="@drawable/ic_upload"
+            android:textColor="@color/button"
             app:iconPadding="8dp"
             app:cornerRadius="15dp"
-            app:iconTint="#6200EE"/>
-        <!-- Submit Button -->
+            app:iconTint="@color/button"/>
+
         <com.google.android.material.button.MaterialButton
             android:id="@+id/submitButton"
             android:layout_width="match_parent"
@@ -111,8 +127,17 @@
             android:text="Submit"
             android:layout_marginTop="20dp"
             style="@style/Widget.Material3.Button"
-            android:backgroundTint="?attr/colorPrimary"
+            android:backgroundTint="@color/button"
             android:textColor="@android:color/white"
             app:cornerRadius="10dp"/>
     </LinearLayout>
-</LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- Centrally placed ProgressBar -->
+    <ProgressBar
+        android:id="@+id/addProgress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone" />
+</FrameLayout>

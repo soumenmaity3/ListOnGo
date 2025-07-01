@@ -51,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        SettingsUtil.applyTheme(this);
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
@@ -89,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
                         isAdmin2=Boolean.parseBoolean(result.trim());
                         if (isAdmin2){
                             Intent intent = new Intent(MainActivity.this, AdminActivity.class);
+                            intent.putExtra("UserId",userId);
                             startActivity(intent);
                         }else {
                             new AlertDialog.Builder(MainActivity.this)
@@ -107,7 +109,11 @@ public class MainActivity extends AppCompatActivity {
 
             }
             else {
-                Toast.makeText(this, "This is settings", Toast.LENGTH_SHORT).show();
+                Intent intent=new Intent(MainActivity.this, SettingsActivity.class);
+                intent.putExtra("userName",userName);
+                intent.putExtra("UserId",userId);
+                intent.putExtra("userEmail",email);
+                startActivity(intent);
             }
             return true;
         });

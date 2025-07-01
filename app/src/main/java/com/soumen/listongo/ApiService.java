@@ -44,7 +44,8 @@ public interface ApiService {
 
     @PUT("product/make-for-user")
     Call<ResponseBody> makeUserProduct(
-            @Query("imaId") Long id
+            @Query("imaId") Long id,
+            @Query("adminId") Long adminId
     );
 
     @GET("user/isAdmin")
@@ -80,4 +81,19 @@ public interface ApiService {
             @Query("email") String email,
             @Query("password") String password
     );
+
+    @DELETE("user/delete-account")
+    Call<ResponseBody> deleteAccount(
+            @Query("userId") Long userId,
+            @Query("email") String email,
+            @Query("password") String password
+    );
+
+    @GET("product/approve/{id}")
+    Call<List<AdminProductModel>> approveProduct(@Path("id") Long userId);
+
+    @GET("product/get-filter-product")
+    Call<List<ProductListModel>> getProductByNickname(
+            @Query("nickname") String nickname);
+
 }

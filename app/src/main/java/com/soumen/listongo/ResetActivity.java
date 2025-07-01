@@ -23,6 +23,7 @@ TextInputEditText edtPassword,edtConfPass;
 MaterialButton btnResetDone;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        SettingsUtil.applyTheme(this);
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_reset);

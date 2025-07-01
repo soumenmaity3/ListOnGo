@@ -2,6 +2,7 @@ package com.soumen.listongo;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -30,6 +31,7 @@ public class SignUpActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        SettingsUtil.applyTheme(this);
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_sign_up);
@@ -63,6 +65,21 @@ public class SignUpActivity extends AppCompatActivity {
             }
             generateOtp();
             sendOtp(storeOTP, email);
+
+            btnGetOtp.setEnabled(false);
+            new CountDownTimer(30000, 1000) {
+
+                @Override
+                public void onTick(long l) {
+                    btnGetOtp.setText("Wait: " + l / 1000 + " s");
+                }
+
+                @Override
+                public void onFinish() {
+                    btnGetOtp.setText("Get OTP");
+                    btnGetOtp.setEnabled(true);
+                }
+            }.start();
         });
 
         btnCreateAcc.setOnClickListener(v -> {

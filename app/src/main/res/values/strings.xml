@@ -1,6 +1,20 @@
 <resources>
     <string name="app_name">ListOnGo</string>
-    <string name="server_api">http://192.168.50.150:8080/api</string>
+    <string name="server_api">http://192.168.111.150:8080/api</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string-array name="theme_options">
+        <item>System Default</item>
+        <item>Light</item>
+        <item>Dark</item>
+    </string-array>
+
+    <string-array name="language_options">
+        <item>English</item>
+        <item>Hindi</item>
+        <item>Bengali</item>
+        <item>Spanish</item>
+    </string-array>
+
+
 </resources>

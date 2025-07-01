@@ -1,85 +1,163 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="24dp"
+    android:id="@+id/main"
     tools:context=".SettingsActivity">
 
-    <!-- Title -->
-    <TextView
-        android:id="@+id/settings_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Settings"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="16dp"
-        android:layout_alignParentTop="true" />
-
-    <!-- Theme Setting -->
-    <TextView
-        android:id="@+id/theme_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="App Theme"
-        android:textSize="16sp"
-        android:layout_below="@id/settings_title"
-        android:layout_marginTop="32dp" />
-
-    <Spinner
-        android:id="@+id/spinner_theme"
+    <!-- AppBar -->
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/theme_label"
-        android:layout_marginTop="8dp" />
+        android:layout_height="?attr/actionBarSize"
+        android:background="#E29595"
+        app:title="Settings"
+        app:subtitle="Settings &amp; preferences"
+        app:navigationIcon="@drawable/back"
+        app:titleTextColor="@color/black"
+        app:subtitleTextColor="?android:attr/textColorSecondary" />
 
-    <!-- Notifications Switch -->
-    <TextView
-        android:id="@+id/notification_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Enable Notifications"
-        android:textSize="16sp"
-        android:layout_below="@id/spinner_theme"
-        android:layout_marginTop="32dp" />
-
-    <Switch
-        android:id="@+id/switch_notifications"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@id/notification_label"
-        android:layout_alignParentEnd="true" />
-
-    <!-- Change Password Button -->
-    <Button
-        android:id="@+id/btn_change_password"
+    <!-- Scrollable content -->
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Change Password"
-        android:layout_below="@id/notification_label"
-        android:layout_marginTop="32dp" />
+        android:layout_height="match_parent"
+        android:layout_marginTop="?attr/actionBarSize"
+        android:padding="24dp">
 
-    <!-- Logout Button -->
-    <Button
-        android:id="@+id/btn_logout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Logout"
-        android:layout_below="@id/btn_change_password"
-        android:layout_marginTop="16dp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:divider="?android:attr/listDivider"
+            android:showDividers="middle"
+            android:dividerPadding="16dp">
 
-    <!-- App Info -->
-    <TextView
-        android:id="@+id/text_app_info"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Version 1.0.0"
-        android:textSize="14sp"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="16dp" />
+            <!-- Switches -->
+            <com.google.android.material.materialswitch.MaterialSwitch
+                android:id="@+id/switch_notifications"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Enable Notifications"/>
 
-</RelativeLayout>
+            <com.google.android.material.materialswitch.MaterialSwitch
+                android:id="@+id/switch_biometric"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Use Biometric Login" />
+
+            <com.google.android.material.materialswitch.MaterialSwitch
+                android:id="@+id/switch_sync"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Auto Sync Data" />
+
+            <!-- Theme Dropdown -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:hint="App Theme"
+                style="@style/Widget.Material3.TextInputLayout.FilledBox.ExposedDropdownMenu">
+
+                <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                    android:id="@+id/spinner_theme"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="System Default"
+                    android:inputType="none" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Username (read-only) -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:hint="Username"
+                style="@style/Widget.Material3.TextInputLayout.FilledBox">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edit_username"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="false"
+                    android:text="Soumen" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Buttons -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_support"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:backgroundTint="@color/button"
+                app:cornerRadius="10dp"
+                android:textColor="@color/white"
+                android:text="Contact Support"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_privacy"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Privacy Policy"
+                android:textColor="@color/white"
+                android:backgroundTint="@color/button"
+                app:cornerRadius="10dp"
+                android:layout_marginTop="12dp"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_about"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="About"
+                android:textColor="@color/white"
+                android:backgroundTint="@color/button"
+                app:cornerRadius="10dp"
+                android:layout_marginTop="12dp"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_feedback"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Feedback"
+                android:textColor="@color/white"
+                android:backgroundTint="@color/button"
+                app:cornerRadius="10dp"
+                android:layout_marginTop="12dp"/>
+
+            <!-- App Version -->
+            <TextView
+                android:id="@+id/text_version"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Version: 1.0.1"
+                android:layout_marginTop="24dp"
+                android:textAppearance="?attr/textAppearanceBodySmall"
+                android:layout_gravity="center" />
+
+            <!-- Logout & Delete -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_logout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Logout"
+                android:textColor="?android:attr/textColorPrimary"
+                android:icon="@drawable/logout"
+                android:layout_marginTop="32dp"
+                style="@style/Widget.Material3.Button.OutlinedButton" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_delete_account"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Delete Account"
+                android:textColor="@android:color/holo_red_dark"
+                android:icon="@drawable/delete"
+                android:layout_marginTop="12dp"
+                style="@style/Widget.Material3.Button.OutlinedButton" />
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

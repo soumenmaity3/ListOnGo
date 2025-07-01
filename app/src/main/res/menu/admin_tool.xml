@@ -1,0 +1,14 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/pendingList"
+        android:title="Pending"
+        android:icon="@drawable/load"/>
+
+    <item
+        android:id="@+id/approveByYou"
+        android:title="Approve By You"
+        android:icon="@drawable/approve"/>
+
+</menu>

@@ -2,6 +2,7 @@ package com.soumen.listongo;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -36,6 +37,7 @@ public class ForgotPassword extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        SettingsUtil.applyTheme(this);
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_forgot_password);
@@ -82,6 +84,20 @@ public class ForgotPassword extends AppCompatActivity {
             }
             generateOtp();
             sendAndStore(email, storeOTP);
+            btnGetOtp.setEnabled(false);
+            new CountDownTimer(15000,1000){
+
+                @Override
+                public void onTick(long l) {
+                    btnGetOtp.setText("Wait: "+l/1000+" s");
+                }
+
+                @Override
+                public void onFinish() {
+                    btnGetOtp.setText("Get OTP");
+                    btnGetOtp.setEnabled(true);
+                }
+            }.start();
         });
         btnForgot.setOnClickListener(v -> {
             String email = editTextEmail.getText().toString();

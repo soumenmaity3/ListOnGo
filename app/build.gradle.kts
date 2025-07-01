@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.google.gms.google.services)
 }
 
 android {
@@ -11,7 +12,7 @@ android {
         applicationId = "com.soumen.listongo"
         minSdk = 24
         targetSdk = 35
-        versionCode = 1
+        versionCode = 2
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -49,7 +50,7 @@ dependencies {
     implementation("com.android.volley:volley:1.2.1")
     implementation("com.google.code.gson:gson:2.8.9")
     //ui
-    implementation("com.google.android.material:material:1.12.0")
+//    implementation("com.google.android.material:material:1.12.0")
     //picture from url
     implementation("com.github.bumptech.glide:glide:4.16.0")
     annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
@@ -64,6 +65,11 @@ dependencies {
     //image
     implementation ("com.github.bumptech.glide:glide:4.16.0")
     annotationProcessor ("com.github.bumptech.glide:compiler:4.16.0")
-
+    //Biometric
+    implementation ("androidx.biometric:biometric:1.1.0")
+    implementation ("androidx.security:security-crypto:1.1.0-alpha06")
+    //Notification
+    implementation ("com.google.firebase:firebase-analytics:22.5.0")
+    implementation ("com.google.firebase:firebase-messaging:24.1.1")
 
 }

@@ -15,6 +15,7 @@ public class OptionActivity extends AppCompatActivity {
 MaterialButton btnSignUp,btnSignIn;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        SettingsUtil.applyTheme(this);
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_option);

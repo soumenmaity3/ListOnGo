@@ -1,95 +1,107 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context=".Fragment.ItemFragment">
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/searchLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Search products"
-        android:layout_margin="12dp"
-        app:startIconDrawable="@drawable/ic_search"
-        app:boxBackgroundMode="filled"
-        app:boxCornerRadiusTopStart="12dp"
-        app:boxCornerRadiusTopEnd="12dp"
-        app:boxCornerRadiusBottomStart="12dp"
-        app:boxCornerRadiusBottomEnd="12dp"
-        style="@style/ShapeAppearanceOverlay.Material3.SearchBar">
-<!--        style="@style/Widget.Material3.TextInputLayout.FilledBox.Dense">-->
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/searchEditText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="text"
-            android:singleLine="true"/>
-    </com.google.android.material.textfield.TextInputLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:orientation="horizontal">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/sidebarRecyclerView"
-            android:layout_width="80dp"
-            android:layout_height="match_parent"
-            android:paddingTop="16dp"
-            android:background="#868484"
-            android:clipToPadding="false"
-            android:scrollbars="vertical" />
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/searchLayout"
+            style="@style/ShapeAppearanceOverlay.Material3.SearchBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="12dp"
+            android:hint="Search products"
+            app:boxBackgroundMode="filled"
+            app:boxCornerRadiusBottomEnd="12dp"
+            app:boxCornerRadiusBottomStart="12dp"
+            app:boxCornerRadiusTopEnd="12dp"
+            app:boxCornerRadiusTopStart="12dp"
+            app:startIconDrawable="@drawable/ic_search">
 
-        <LinearLayout
-            android:id="@+id/content_area"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical">
-
-            <com.google.android.material.appbar.MaterialToolbar
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/searchEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#C23E3E"
-                android:elevation="4dp"
-                android:id="@+id/cart_tool"
-                android:padding="12dp">
+                android:inputType="text"
+                android:singleLine="true" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <TextView
-                        android:id="@+id/titleText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Cart The Item"
-                        android:textStyle="bold|italic"
-                        android:textSize="18sp"
-                        android:textColor="@android:color/black"
-                        android:layout_alignParentStart="true"
-                        android:layout_centerVertical="true" />
-
-                    <ImageView
-                        android:id="@+id/arrowIcon"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@drawable/right_arrow"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
-                        android:contentDescription="Arrow"/>
-                </RelativeLayout>
-            </com.google.android.material.appbar.MaterialToolbar>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/itemRecycleList"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+                android:id="@+id/sidebarRecyclerView"
+                android:layout_width="80dp"
+                android:layout_height="match_parent"
+                android:background="#868484"
+                android:clipToPadding="false"
+                android:paddingTop="16dp"
+                android:scrollbars="vertical" />
+
+            <LinearLayout
+                android:id="@+id/content_area"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <com.google.android.material.appbar.MaterialToolbar
+                    android:id="@+id/cart_tool"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#C23E3E"
+                    android:elevation="4dp"
+                    android:padding="12dp">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/titleText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentStart="true"
+                            android:layout_centerVertical="true"
+                            android:text="Cart The Item"
+                            android:textColor="@android:color/black"
+                            android:textSize="18sp"
+                            android:textStyle="bold|italic" />
+
+                        <ImageView
+                            android:id="@+id/arrowIcon"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:contentDescription="Arrow"
+                            android:src="@drawable/right_arrow" />
+                    </RelativeLayout>
+                </com.google.android.material.appbar.MaterialToolbar>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/itemRecycleList"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
-</LinearLayout>
+
+    <!-- 🔄 ProgressBar overlay -->
+    <ProgressBar
+        android:id="@+id/itemProgress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone" />
+</FrameLayout>

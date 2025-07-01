@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.soumen.listongo.R;
+import com.soumen.listongo.SettingsUtil;
 
 public class AllListFragment extends Fragment {
     public AllListFragment() {

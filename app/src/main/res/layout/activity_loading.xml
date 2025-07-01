@@ -53,6 +53,8 @@
         android:layout_centerInParent="true"
         android:layout_marginBottom="-68dp"
         app:cornerRadius="10dp"
+        android:backgroundTint="@color/button"
+        android:textColor="@color/white"
         android:visibility="gone"
         android:text="Retry"/>
 
@@ -61,6 +63,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Request"
+        android:textColor="@color/button"
         style="@style/Widget.Material3.Button.OutlinedButton"
        android:layout_alignBottom="@+id/retry_button"
         android:layout_marginBottom="-60dp"

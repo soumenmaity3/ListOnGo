@@ -162,5 +162,15 @@
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
+    <!-- ProgressBar overlay -->
+    <ProgressBar
+        android:id="@+id/signup_progressbar"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_centerInParent="true"
+        android:visibility="gone"
+        style="?android:attr/progressBarStyleLarge"
+        android:indeterminate="true"/>
+
 
 </RelativeLayout>

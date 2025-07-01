@@ -28,11 +28,13 @@ import retrofit2.Response;
 public class AdminListAdapter extends RecyclerView.Adapter<AdminListAdapter.viewHolder> {
     ArrayList<AdminProductModel> arrayList;
     Context context;
+    Long adminId;
 //    String api_url;
 
-    public AdminListAdapter(ArrayList<AdminProductModel> arrayList, Context context /*,String api_url*/) {
+    public AdminListAdapter(ArrayList<AdminProductModel> arrayList, Context context ,Long adminId) {
         this.arrayList = arrayList;
         this.context = context;
+        this.adminId=adminId;
 //        this.api_url = api_url;
     }
 
@@ -56,15 +58,15 @@ public class AdminListAdapter extends RecyclerView.Adapter<AdminListAdapter.view
                 .into(holder.imgProduct);
         holder.btnActive.setOnClickListener(v -> {
             ApiService apiService = ApiClient.getInstance().create(ApiService.class);
-            Call<ResponseBody> makeUser = apiService.makeUserProduct(model.getId());
+            Call<ResponseBody> makeUser = apiService.makeUserProduct(model.getId(),adminId);
             makeUser.enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                     Log.d("model.getId()", String.valueOf(model.getId()));
                     int position = holder.getAdapterPosition();
                     notifyItemRemoved(position);
-                    arrayList.remove(position);  // Also remove from the backing list
-                    notifyDataSetChanged();     // Optional; avoid if using notifyItemRemoved
+                    arrayList.remove(position);
+                    notifyDataSetChanged();
 
                     Toast.makeText(context, "Done", Toast.LENGTH_SHORT).show();
                 }

@@ -1,6 +1,8 @@
 package com.soumen.listongo.Fragment;
 
 import static android.app.Activity.RESULT_OK;
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 
 import static com.google.android.material.internal.ViewUtils.hideKeyboard;
 
@@ -30,15 +32,18 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.MaterialAutoCompleteTextView;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.gson.Gson;
 import com.soumen.listongo.ApiClient;
 import com.soumen.listongo.ApiService;
 import com.soumen.listongo.R;
+import com.soumen.listongo.SettingsUtil;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -58,15 +63,18 @@ public class AddItemFragment extends Fragment {
     public AddItemFragment() {
     }
 
-    TextInputEditText edtTitle, edtDescription, edtPrice;
+    TextInputEditText edtTitle, edtDescription, edtPrice,nickNameEditText;
     MaterialAutoCompleteTextView dropCategory;
     ImageView productImageView;
     MaterialButton uploadButton, submitButton;
+    TextInputLayout dropdown_menu;
+    ProgressBar addProgress;
     private final int gallary_code = 1000;
     private Uri imageUri;
     String item;
     Long userId;
 
+    @SuppressLint("MissingInflatedId")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -77,7 +85,10 @@ public class AddItemFragment extends Fragment {
         dropCategory = view.findViewById(R.id.categoryDropdown);
         productImageView = view.findViewById(R.id.productImageView);
         uploadButton = view.findViewById(R.id.uploadButton);
+        dropdown_menu=view.findViewById(R.id.dropdown_menu);
         submitButton = view.findViewById(R.id.submitButton);
+        addProgress=view.findViewById(R.id.addProgress);
+        nickNameEditText=view.findViewById(R.id.nickNameEditText);
 
         userId=getArguments().getLong("UserId");
 
@@ -93,28 +104,28 @@ public class AddItemFragment extends Fragment {
                     edtPrice.getText().toString() == null || edtPrice.getText().toString().isEmpty() ||
                     dropCategory.getText().toString() == null || dropCategory.getText().toString().isEmpty() ||
                     productImageView == null) {
+                Toast.makeText(getContext(), "Something is missing", Toast.LENGTH_SHORT).show();
                 return;
             }
 
             addProduct();
         });
 
-        String[] categories = {"Soft Drinks", "Sweets & Chips", "Fresh Vegetable", "Fresh Fruits", "Dry Fruits", "Flowers & Leaves", "Body Care", "Exotics", "Coriander & Others", "Dairy, Brade & Eggs", "Electronics", "Atta, Rice & Dal", "Bakery & Brade", "Puja Store"};
+        String[] categories = {"Soft Drinks", "Sweets & Chips","Fashion", "Fresh Vegetable", "Fresh Fruits", "Dry Fruits", "Flowers & Leaves", "Body Care", "Exotics", "Coriander & Others", "Dairy, Brade & Eggs", "Electronics", "Atta, Rice & Dal", "Bakery & Brade", "Puja Store"};
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), R.layout.drop_down_item, categories);
         dropCategory.setAdapter(adapter);
 
-        dropCategory.setOnTouchListener((v, e) -> {
+        dropdown_menu.setOnTouchListener((v, e) -> {
             if (e.getAction() == MotionEvent.ACTION_DOWN) {
                 hideKeyboard(requireActivity());
             }
             return false;
         });
 
+        dropCategory.setOnItemClickListener((adapterView, view1, position, id) -> {
+            item = adapterView.getItemAtPosition(position).toString();
+        });
 
-        dropCategory.setOnItemClickListener(((adapterView, view1, i, l) -> {
-            item = adapterView.getItemAtPosition(i).toString();
-            Toast.makeText(getContext(), "item= " + item, Toast.LENGTH_SHORT).show();
-        }));
 
         return view;
     }
@@ -146,6 +157,7 @@ public class AddItemFragment extends Fragment {
 
 
     public void addProduct() {
+        addProgress.setVisibility(VISIBLE);
         if (imageUri == null) {
             return;
         }
@@ -154,15 +166,17 @@ public class AddItemFragment extends Fragment {
             ApiService apiService = ApiClient.getInstance().create(ApiService.class);
 
             // 1. Collect product data
-            String title = edtTitle.getText().toString();
+            String title = edtTitle.getText().toString().trim();
             String description = edtDescription.getText().toString();
             double price = Double.parseDouble(edtPrice.getText().toString());
+            String nickName=nickNameEditText.getText().toString().trim();
 
             // 2. Create product object
             AddProductModel product = new AddProductModel();
             product.setTitle(title);
             product.setDescription(description);
             product.setPrice(price);
+            product.setNickName(nickName);
             product.setCategory(item);
 
             // 3. Convert product to JSON
@@ -199,6 +213,9 @@ public class AddItemFragment extends Fragment {
                         edtDescription.setText("");
                         edtPrice.setText("");
                         dropCategory.setText("");
+                        productImageView.setImageResource(R.drawable.product);
+                        nickNameEditText.setText("");
+                        addProgress.setVisibility(GONE);
                         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 
                         builder.setTitle("Add Successfully")
@@ -213,18 +230,23 @@ public class AddItemFragment extends Fragment {
                         AlertDialog dialog = builder.create(); // Use AlertDialog type
                         dialog.show();
                     } else {
-                        Log.e("Upload", "Server Error: " + response.errorBody());
-                    }
+                        String errorMsg = "";
+                        try {
+                            errorMsg = response.errorBody().string(); // Convert to readable text
+                        } catch (IOException e) {
+                            errorMsg = "Error reading error body: " + e.getMessage();
+                        }
+                        Log.e("Upload", "Server Error: " + errorMsg);                    }
                 }
 
                 @Override
                 public void onFailure(Call<ResponseBody> call, Throwable t) {
-                    Log.e("Upload", "Failure: " + t.getMessage());
+                    Log.e("Upload", "Failure: " + t.getMessage().toString());
                 }
             });
 
         } catch (Exception e) {
-            Log.e("Upload", "Exception: " + e.getMessage());
+            Log.e("Upload", "Exception: " + e.getMessage().toString());
         }
     }
 

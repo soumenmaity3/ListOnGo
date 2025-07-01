@@ -16,11 +16,16 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
 
+import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.tabs.TabLayout;
 import com.soumen.listongo.ApiClient;
 import com.soumen.listongo.ApiService;
+import com.soumen.listongo.ForAdmin.viewfragment.ViewpagerAdminAdapter;
 import com.soumen.listongo.MainActivity;
 import com.soumen.listongo.R;
+import com.soumen.listongo.SettingsUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,15 +35,18 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class AdminActivity extends AppCompatActivity {
-    RecyclerView recyclerView;
-    ArrayList<AdminProductModel> arrayProduct;
-    AdminListAdapter adapter;
-    TextView txtDone;
+
+
     String api_url;
+    MaterialToolbar toolbarAdmin;
+
+    TabLayout tab;
+    ViewPager viewPager;
 
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        SettingsUtil.applyTheme(this);
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_admin);
@@ -49,45 +57,26 @@ public class AdminActivity extends AppCompatActivity {
         });
         api_url = getString(R.string.server_api);
 
-        recyclerView = findViewById(R.id.adminPanel);
-        arrayProduct = new ArrayList<>();
-        txtDone = findViewById(R.id.txtDone);
 
-// SET LAYOUT MANAGER & ADAPTER
-        adapter = new AdminListAdapter(arrayProduct, this);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(adapter);
 
-// Call API
-        getAdminProduct();
+        toolbarAdmin=findViewById(R.id.toolbarAdmin);
 
-    }
+        tab=findViewById(R.id.adminTab);
+        viewPager=findViewById(R.id.viewPager);
 
-    public void getAdminProduct() {
-        ApiService apiService = ApiClient.getInstance().create(ApiService.class);
-        Call<List<AdminProductModel>> call = apiService.AdminList();
-        call.enqueue(new Callback<List<AdminProductModel>>() {
-            @Override
-            public void onResponse(Call<List<AdminProductModel>> call, Response<List<AdminProductModel>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    txtDone.setVisibility(GONE);
-                    arrayProduct.clear();
-                    arrayProduct.addAll(response.body());
-                    Log.d("AdminResponse", response.body().toString());
-                    adapter.notifyDataSetChanged();
-                } else {
-                    Toast.makeText(AdminActivity.this, "Faild to Fetch List", Toast.LENGTH_SHORT).show();
-                }
-                if (response.body() == null||response.body().isEmpty()) {
-                    txtDone.setVisibility(VISIBLE);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<AdminProductModel>> call, Throwable throwable) {
-                Toast.makeText(AdminActivity.this, "Error", Toast.LENGTH_SHORT).show();
-            }
+        toolbarAdmin.setNavigationOnClickListener(v->{
+            onBackPressed();
         });
+
+
+        Long userId=getIntent().getLongExtra("UserId",0);
+        ViewpagerAdminAdapter viewpagerAdminAdapter=new ViewpagerAdminAdapter(getSupportFragmentManager(),userId);
+        viewPager.setAdapter(viewpagerAdminAdapter);
+        tab.setupWithViewPager(viewPager);
+
+
     }
+
+
 
 }
