@@ -36,20 +36,9 @@
             android:ellipsize="end"
             app:layout_constraintStart_toEndOf="@id/img_product"
             app:layout_constraintTop_toTopOf="@id/img_product"
-            app:layout_constraintEnd_toStartOf="@id/btn_remove"
             app:layout_constraintHorizontal_bias="0"
             android:layout_marginStart="12dp" />
 
-        <!-- Remove Icon -->
-        <ImageButton
-            android:id="@+id/btn_remove"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:background="@android:color/transparent"
-            android:src="@drawable/trash"
-            android:scaleType="centerCrop"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
 
         <!-- Quantity and Price Row -->
         <LinearLayout
@@ -109,7 +98,7 @@
                 android:id="@+id/text_price"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="₹499.00"
+                android:text="₹20.00"
                 android:textStyle="bold"
                 android:textSize="16sp" />
         </LinearLayout>

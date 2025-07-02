@@ -12,7 +12,7 @@ android {
         applicationId = "com.soumen.listongo"
         minSdk = 24
         targetSdk = 35
-        versionCode = 2
+        versionCode = 3
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -71,5 +71,13 @@ dependencies {
     //Notification
     implementation ("com.google.firebase:firebase-analytics:22.5.0")
     implementation ("com.google.firebase:firebase-messaging:24.1.1")
+    // Room with LiveData support
+    implementation ("androidx.room:room-runtime:2.6.1")
+    annotationProcessor ("androidx.room:room-compiler:2.6.1")
+// LiveData (comes with lifecycle components)
+    implementation( "androidx.lifecycle:lifecycle-livedata:2.7.0")
+    implementation ("androidx.lifecycle:lifecycle-viewmodel:2.7.0")
+    annotationProcessor ("androidx.lifecycle:lifecycle-compiler:2.7.0")
+
 
 }

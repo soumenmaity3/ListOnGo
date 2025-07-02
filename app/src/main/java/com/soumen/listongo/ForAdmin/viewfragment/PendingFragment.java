@@ -52,9 +52,10 @@ public class PendingFragment extends Fragment {
         arrayProduct = new ArrayList<>();
 
         Long userId=getArguments().getLong("UserId");
+        String image_url=getString(R.string.server_api);
 
 //         SET LAYOUT MANAGER & ADAPTER
-        adapter = new AdminListAdapter(arrayProduct, getContext(),userId);
+        adapter = new AdminListAdapter(arrayProduct, getContext(),userId,image_url);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(adapter);
 

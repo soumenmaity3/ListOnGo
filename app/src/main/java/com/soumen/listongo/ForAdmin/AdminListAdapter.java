@@ -29,13 +29,13 @@ public class AdminListAdapter extends RecyclerView.Adapter<AdminListAdapter.view
     ArrayList<AdminProductModel> arrayList;
     Context context;
     Long adminId;
-//    String api_url;
+    String image_url;
 
-    public AdminListAdapter(ArrayList<AdminProductModel> arrayList, Context context ,Long adminId) {
+    public AdminListAdapter(ArrayList<AdminProductModel> arrayList, Context context, Long adminId,String image_url) {
         this.arrayList = arrayList;
         this.context = context;
-        this.adminId=adminId;
-//        this.api_url = api_url;
+        this.adminId = adminId;
+        this.image_url=image_url;
     }
 
     @NonNull
@@ -51,14 +51,15 @@ public class AdminListAdapter extends RecyclerView.Adapter<AdminListAdapter.view
         holder.txtTitle.setText(model.getTitle());
         holder.txtPrice.setText(String.valueOf(model.getPrice()));
         holder.txtDescription.setText(model.getDescription());
+        String full_image=image_url+"/list-on-go/product/image/"+model.getId();
         Glide.with(context)
-                .load(model.getImageUrl())
+                .load(full_image)
                 .placeholder(R.drawable.ic_upload)
                 .error(R.drawable.puja)
                 .into(holder.imgProduct);
         holder.btnActive.setOnClickListener(v -> {
             ApiService apiService = ApiClient.getInstance().create(ApiService.class);
-            Call<ResponseBody> makeUser = apiService.makeUserProduct(model.getId(),adminId);
+            Call<ResponseBody> makeUser = apiService.makeUserProduct(model.getId(), adminId);
             makeUser.enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -80,13 +81,18 @@ public class AdminListAdapter extends RecyclerView.Adapter<AdminListAdapter.view
         });
         holder.adminPanelList.setOnClickListener(v -> {
             BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(context);
-            View setView=LayoutInflater.from(context).inflate(R.layout.bottom_sheet_dialog,null);
+            View setView = LayoutInflater.from(context).inflate(R.layout.bottom_sheet_dialog, null);
             bottomSheetDialog.setContentView(setView);
             ImageView bottomImage = setView.findViewById(R.id.image_preview);
             TextView txtTitle = setView.findViewById(R.id.title_text);
             TextView txtDescription = setView.findViewById(R.id.description_text);
             TextView txtPrice = setView.findViewById(R.id.price_text);
-            bottomImage.setImageURI(Uri.parse(model.getImageUrl()));
+            String load_image=image_url+"/list-on-go/product/image/"+model.getId();
+            Glide.with(context)
+                    .load(load_image)
+                    .placeholder(R.drawable.ic_upload)
+                    .error(R.drawable.puja)
+                    .into(holder.imgProduct);
             txtTitle.setText(model.getTitle());
             txtDescription.setText(model.getDescription());
             txtPrice.setText(String.valueOf(model.getPrice()));

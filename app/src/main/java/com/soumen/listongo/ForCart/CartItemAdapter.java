@@ -1,79 +1,118 @@
 package com.soumen.listongo.ForCart;
 
+import android.app.Activity;
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.*;
 import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.soumen.listongo.R;
 
-import java.util.List;
+import java.util.ArrayList;
 
-public class CartItemAdapter extends RecyclerView.Adapter<CartItemAdapter.CartViewHolder> {
+public class CartItemAdapter extends RecyclerView.Adapter<CartItemAdapter.viewHolder> {
+    private Context context;
+    private ArrayList<CartModel> arrCart;
+    String image_url;
 
-    private List<CartItem> cartItemList;
-    private OnCartUpdateListener listener;
-
-    public interface OnCartUpdateListener {
-        void onCartUpdated();
-    }
-
-    public CartItemAdapter(List<CartItem> cartItemList, OnCartUpdateListener listener) {
-        this.cartItemList = cartItemList;
-        this.listener = listener;
+    public CartItemAdapter(Context context, ArrayList<CartModel> arrCart, String image_url) {
+        this.context = context;
+        this.arrCart = arrCart;
+        this.image_url = image_url;
     }
 
     @NonNull
     @Override
-    public CartViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.cart_item_view, parent, false);
-        return new CartViewHolder(view);
+    public CartItemAdapter.viewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(context).inflate(R.layout.cart_item_view, parent, false);
+        return new viewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull CartViewHolder holder, int position) {
-        CartItem item = cartItemList.get(position);
-        holder.name.setText(item.getName());
-        holder.price.setText("₹" + item.getPrice());
-        holder.quantity.setText(String.valueOf(item.getQuantity()));
+    public void onBindViewHolder(@NonNull CartItemAdapter.viewHolder holder, int position) {
+        CartModel model = arrCart.get(position);
+        holder.textTitle.setText(model.getTitle());
+//        holder.price.setText(String.valueOf(model.getPrice()));
+        holder.txtQuantity.setText(String.valueOf(model.getQuantity()));
+        String fullUrl = image_url + "/list-on-go/product/image/" + model.getId();
+        Glide.with(context)
+                .load(fullUrl)
+                .placeholder(R.drawable.ic_upload)
+                .error(R.drawable.puja)
+                .into(holder.productIma);
+        holder.btnPlus.setOnClickListener(v -> {
+            AppDatabase db = AppDatabaseClient.getInstance(context);
+            new Thread(() -> {
+                db.cartDao().increaseQuantityByOne(model.getId());
+                int updatedQuantity = db.cartDao().getQuantityById(model.getId());
+                model.setQuantity(updatedQuantity);
 
-        holder.btnAdd.setOnClickListener(v -> {
-            item.setQuantity(item.getQuantity() + 1);
-            notifyItemChanged(position);
-            listener.onCartUpdated();
+                ((Activity) context).runOnUiThread(() -> {
+                    holder.txtQuantity.setText(String.valueOf(updatedQuantity));
+                    double totalPrice = model.getPrice() * updatedQuantity;
+                    holder.price.setText("₹" + totalPrice);
+                });
+            }).start();
         });
+
 
         holder.btnMinus.setOnClickListener(v -> {
-            if (item.getQuantity() > 1) {
-                item.setQuantity(item.getQuantity() - 1);
-                notifyItemChanged(position);
-                listener.onCartUpdated();
-            }
+            AppDatabase db = AppDatabaseClient.getInstance(context);
+            new Thread(() -> {
+                db.cartDao().decreaseQuantityByOne(model.getId());
+                int updatedQuantity = db.cartDao().getQuantityById(model.getId());
+
+                if (updatedQuantity <= 0) {
+                    db.cartDao().deleteById(model.getId());
+                }
+
+                ((Activity) context).runOnUiThread(() -> {
+                    int currentPosition = holder.getAdapterPosition();
+                    if (updatedQuantity > 0) {
+                        model.setQuantity(updatedQuantity);
+                        holder.txtQuantity.setText(String.valueOf(updatedQuantity));
+                        double totalPrice = model.getPrice() * updatedQuantity;
+                        holder.price.setText("₹" + totalPrice);
+                    } else {
+                        Toast.makeText(context, "Item removed from cart", Toast.LENGTH_SHORT).show();
+
+                        if (currentPosition >= 0 && currentPosition < arrCart.size()) {
+                            arrCart.remove(currentPosition);
+                            notifyItemRemoved(currentPosition);
+                            notifyItemRangeChanged(currentPosition, arrCart.size());
+                        }
+                    }
+                });
+            }).start();
         });
+
+
     }
 
     @Override
     public int getItemCount() {
-        return cartItemList.size();
+        return arrCart.size();
     }
 
-    public static class CartViewHolder extends RecyclerView.ViewHolder {
-        TextView name, price, quantity;
-        ImageButton btnAdd, btnMinus;
-        ImageView productImage;
-        public CartViewHolder(@NonNull View itemView) {
+    public class viewHolder extends RecyclerView.ViewHolder {
+        ImageView productIma;
+        TextView textTitle, txtQuantity, price;
+        ImageButton btnPlus, btnMinus;
+
+        public viewHolder(@NonNull View itemView) {
             super(itemView);
-            name = itemView.findViewById(R.id.text_product_name);
+            productIma = itemView.findViewById(R.id.img_product);
+            textTitle = itemView.findViewById(R.id.text_product_name);
             price = itemView.findViewById(R.id.text_price);
-            quantity = itemView.findViewById(R.id.text_quantity);
-            btnAdd = itemView.findViewById(R.id.btn_increase);
+            txtQuantity = itemView.findViewById(R.id.text_quantity);
             btnMinus = itemView.findViewById(R.id.btn_decrease);
-            productImage=itemView.findViewById(R.id.img_product);
+            btnPlus = itemView.findViewById(R.id.btn_increase);
         }
     }
 }

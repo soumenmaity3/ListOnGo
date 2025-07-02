@@ -44,7 +44,8 @@ public class ApproveByYouFragment extends Fragment {
         recycleApprove=view.findViewById(R.id.recycleApprove);
         arrayList=new ArrayList<>();
         Long userId = getArguments().getLong("UserId");
-        adapter = new AdminListAdapter(arrayList, getContext(),userId);
+        String image_url=getString(R.string.server_api);
+        adapter = new AdminListAdapter(arrayList, getContext(),userId,image_url);
         recycleApprove.setLayoutManager(new LinearLayoutManager(getContext()));
         recycleApprove.setAdapter(adapter);
 
