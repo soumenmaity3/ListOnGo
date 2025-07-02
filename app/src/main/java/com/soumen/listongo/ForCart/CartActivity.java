@@ -8,6 +8,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.android.material.appbar.MaterialToolbar;
 import com.soumen.listongo.R;
 import com.soumen.listongo.SettingsUtil;
 
@@ -24,5 +25,7 @@ public class CartActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        MaterialToolbar toolbar=findViewById(R.id.cartToolbar);
+        toolbar.setNavigationOnClickListener(v->onBackPressed());
     }
 }

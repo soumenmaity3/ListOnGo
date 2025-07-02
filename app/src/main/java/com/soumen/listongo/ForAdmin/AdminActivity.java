@@ -4,12 +4,15 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.*;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -56,27 +59,45 @@ public class AdminActivity extends AppCompatActivity {
             return insets;
         });
         api_url = getString(R.string.server_api);
+        TextView marqueeText = findViewById(R.id.marqueeText);
+        MaterialToolbar toolbar=findViewById(R.id.toolbarAdmin);
+
+        toolbar.setNavigationOnClickListener(v->onBackPressed());
+
+        marqueeText.setSelected(true);
+
+        marqueeText.setOnClickListener(v -> {
+            AlertDialog.Builder alert = new AlertDialog.Builder(this);
+            alert.setTitle("Alert")
+                    .setMessage("📢 Attention: Listing any product in the user list is entirely your responsibility, as it will be associated with your user ID.📢")
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.dismiss();
+                        }
+                    })
+                    .show();
+        });
 
 
 
-        toolbarAdmin=findViewById(R.id.toolbarAdmin);
+        toolbarAdmin = findViewById(R.id.toolbarAdmin);
 
-        tab=findViewById(R.id.adminTab);
-        viewPager=findViewById(R.id.viewPager);
+        tab = findViewById(R.id.adminTab);
+        viewPager = findViewById(R.id.viewPager);
 
-        toolbarAdmin.setNavigationOnClickListener(v->{
+        toolbarAdmin.setNavigationOnClickListener(v -> {
             onBackPressed();
         });
 
 
-        Long userId=getIntent().getLongExtra("UserId",0);
-        ViewpagerAdminAdapter viewpagerAdminAdapter=new ViewpagerAdminAdapter(getSupportFragmentManager(),userId);
+        Long userId = getIntent().getLongExtra("UserId", 0);
+        ViewpagerAdminAdapter viewpagerAdminAdapter = new ViewpagerAdminAdapter(getSupportFragmentManager(), userId);
         viewPager.setAdapter(viewpagerAdminAdapter);
         tab.setupWithViewPager(viewPager);
 
 
     }
-
 
 
 }

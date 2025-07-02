@@ -7,6 +7,7 @@
     android:layout_height="match_parent"
     tools:context=".ForAdmin.AdminActivity">
 
+    <!-- Toolbar -->
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbarAdmin"
         android:layout_width="match_parent"
@@ -18,17 +19,37 @@
         app:title="Admin Panel"
         app:titleTextColor="@color/black" />
 
+    <!-- Marquee Text below toolbar -->
+    <TextView
+        android:id="@+id/marqueeText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/toolbarAdmin"
+        android:text="📢 Attention: Listing any product in the user list is entirely your responsibility, as it will be associated with your user ID. 📢"
+        android:textSize="16sp"
+        android:textColor="#FB0000"
+        android:singleLine="true"
+        android:ellipsize="marquee"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:scrollHorizontally="true"
+        android:padding="8dp"
+        android:background="#FFE8E8" />
 
+    <!-- Tab Layout below marquee -->
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/adminTab"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/toolbarAdmin"
+        android:layout_below="@id/marqueeText"
         android:backgroundTint="#C87E7E" />
 
+    <!-- ViewPager below tabs -->
     <androidx.viewpager.widget.ViewPager
+        android:id="@+id/viewPager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/adminTab"
-        android:id="@+id/viewPager"/>
+        android:layout_below="@id/adminTab" />
+
 </RelativeLayout>
