@@ -38,7 +38,8 @@ public class CartItemAdapter extends RecyclerView.Adapter<CartItemAdapter.viewHo
     public void onBindViewHolder(@NonNull CartItemAdapter.viewHolder holder, int position) {
         CartModel model = arrCart.get(position);
         holder.textTitle.setText(model.getTitle());
-//        holder.price.setText(String.valueOf(model.getPrice()));
+        double mTotalPrice = model.getPrice() * model.getQuantity();
+        holder.price.setText(String.format("₹%.2f", mTotalPrice));
         holder.txtQuantity.setText(String.valueOf(model.getQuantity()));
         String fullUrl = image_url + "/list-on-go/product/image/" + model.getId();
         Glide.with(context)

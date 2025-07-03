@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.button.MaterialButton;
 import com.soumen.listongo.R;
 import com.soumen.listongo.SettingsUtil;
 
@@ -40,6 +41,7 @@ public class CartActivity extends AppCompatActivity {
         String image_url=getString(R.string.server_api);
 
         MaterialToolbar toolbar = findViewById(R.id.cartToolbar);
+        MaterialButton btnAddList=findViewById(R.id.button_cart);
         totalPriceText = findViewById(R.id.text_total_price);
         toolbar.setNavigationOnClickListener(v -> onBackPressed());
 
@@ -48,6 +50,18 @@ public class CartActivity extends AppCompatActivity {
         cartList.setLayoutManager(new LinearLayoutManager(this));
         cartList.setAdapter(adapter);
 
+        btnAddList.setOnClickListener(v -> {
+            Toast.makeText(this, "Add list Done", Toast.LENGTH_SHORT).show();
+            AppDatabase db = AppDatabaseClient.getInstance(this);
+            new Thread(() -> {
+                db.cartDao().delete();
+                runOnUiThread(() -> {
+                    cartItems.clear();
+                    adapter.notifyDataSetChanged();
+                    totalPriceText.setText("₹0.00");
+                });
+            }).start();
+        });
         observeCartItems();
 
     }

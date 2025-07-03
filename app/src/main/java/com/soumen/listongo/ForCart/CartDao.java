@@ -36,7 +36,7 @@ public interface CartDao {
 
 
     @Query("DELETE FROM cart_items")
-    void Delete();
+    void delete();
 
     @Query("SELECT quantity FROM cart_items WHERE id = :id")
     int getQuantityById(Long id);
