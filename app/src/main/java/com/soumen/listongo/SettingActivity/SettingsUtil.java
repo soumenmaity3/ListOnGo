@@ -1,4 +1,4 @@
-package com.soumen.listongo;
+package com.soumen.listongo.SettingActivity;
 
 import static android.content.Context.MODE_PRIVATE;
 

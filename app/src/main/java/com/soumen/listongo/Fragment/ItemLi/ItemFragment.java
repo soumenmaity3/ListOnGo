@@ -1,4 +1,4 @@
-package com.soumen.listongo.Fragment;
+package com.soumen.listongo.Fragment.ItemLi;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
@@ -25,7 +25,6 @@ import com.soumen.listongo.ApiClient;
 import com.soumen.listongo.ApiService;
 import com.soumen.listongo.ForCart.CartActivity;
 import com.soumen.listongo.R;
-import com.soumen.listongo.SettingsUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -57,7 +56,8 @@ public class ItemFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_item, container, false);
         api_url = getString(R.string.server_api);
         searchLayout = view.findViewById(R.id.searchEditText);
-        itemProgress=view.findViewById(R.id.itemProgress);
+        itemProgress = view.findViewById(R.id.itemProgress);
+        Long userId= getArguments().getLong("UserId");
         // Sidebar
         RecyclerView sidebar = view.findViewById(R.id.sidebarRecyclerView);
         sidebar.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -65,15 +65,19 @@ public class ItemFragment extends Fragment {
 
         cart_tool.setOnClickListener(v -> {
             Intent intent = new Intent(getContext(), CartActivity.class);
+            intent.putExtra("userId",userId);
             startActivity(intent);
         });
 
         menuItems = Arrays.asList(
                 new SidebarItem(R.drawable.fruit, "All"),
                 new SidebarItem(R.drawable.soft_drink, "Soft Drinks"),
+                new SidebarItem(R.drawable.medicine,"Medicine"),
                 new SidebarItem(R.drawable.snacks, "Sweets & Chips"),
                 new SidebarItem(R.drawable.brand, "Fashion"),
                 new SidebarItem(R.drawable.vegetables, "Fresh Vegetable"),
+                new SidebarItem(R.drawable.husk,"Husk Store"),
+                new SidebarItem(R.drawable.spices, "Spices"),
                 new SidebarItem(R.drawable.fresh_fruits, "Fresh Fruits"),
                 new SidebarItem(R.drawable.dried_fruits, "Dry Fruits"),
                 new SidebarItem(R.drawable.roses, "Flowers & Leaves"),
@@ -137,6 +141,16 @@ public class ItemFragment extends Fragment {
                 case 15:
                     itemByCategory(menuItems.get(position).title);
                     break;
+                case 16:
+                    itemByCategory(menuItems.get(position).title);
+                    break;
+                case 17:
+                    itemByCategory(menuItems.get(position).title);
+                    break;
+                case 18:
+                    itemByCategory(menuItems.get(position).title);
+                    break;
+
             }
         });
         searchLayout.setOnEditorActionListener((v, id, event) -> {
@@ -246,10 +260,10 @@ public class ItemFragment extends Fragment {
         });
     }
 
-    private void getItemByNickName(String nickName){
+    private void getItemByNickName(String nickName) {
         itemProgress.setVisibility(VISIBLE);
         ApiService apiService = ApiClient.getInstance().create(ApiService.class);
-        Call<List<ProductListModel>> getItemByNick=apiService.getProductByNickname(nickName);
+        Call<List<ProductListModel>> getItemByNick = apiService.getProductByNickname(nickName);
         getItemByNick.enqueue(new Callback<List<ProductListModel>>() {
             @Override
             public void onResponse(Call<List<ProductListModel>> call, Response<List<ProductListModel>> response) {

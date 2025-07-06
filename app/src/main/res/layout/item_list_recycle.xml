@@ -52,7 +52,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Product Title"
-                        android:textColor="@android:color/black"
                         android:textSize="16sp"
                         android:textStyle="bold" />
 
@@ -63,7 +62,6 @@
                         android:maxLines="1"
                         android:paddingLeft="10dp"
                         android:text="ProductDescription"
-                        android:textColor="@android:color/darker_gray"
                         android:textSize="13sp"
                         android:visibility="gone" />
 

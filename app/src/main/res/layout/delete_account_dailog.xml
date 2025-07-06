@@ -4,7 +4,6 @@
     android:layout_width="320dp"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
-    android:backgroundTint="@android:color/white"
     android:padding="24dp"
     app:cardCornerRadius="16dp"
     app:cardElevation="8dp">
@@ -42,7 +41,6 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:text="Delete Account ?"
-            android:textColor="@android:color/black"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -54,7 +52,6 @@
             android:layout_marginBottom="24dp"
             android:gravity="center"
             android:text="Are you sure you want to delete your Account ?"
-            android:textColor="#444444"
             android:textSize="14sp" />
 
         <!-- Buttons -->

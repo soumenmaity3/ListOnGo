@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/main"
-    tools:context=".SettingsActivity">
+    tools:context=".SettingActivity.SettingsActivity">
 
     <!-- AppBar -->
     <com.google.android.material.appbar.MaterialToolbar
@@ -117,6 +117,7 @@
                 app:cornerRadius="10dp"
                 android:layout_marginTop="12dp"/>
 
+
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_feedback"
                 android:layout_width="match_parent"
@@ -126,6 +127,7 @@
                 android:backgroundTint="@color/button"
                 app:cornerRadius="10dp"
                 android:layout_marginTop="12dp"/>
+
 
             <!-- App Version -->
             <TextView
@@ -139,22 +141,34 @@
 
             <!-- Logout & Delete -->
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_clear_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Clear Your List"
+                android:textColor="?android:attr/textColorPrimary"
+                android:icon="@drawable/logout"
+                android:layout_marginTop="32dp"
+                style="@style/Widget.Material3.Button.OutlinedButton" />
+
+
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_logout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Logout"
                 android:textColor="?android:attr/textColorPrimary"
-                android:icon="@drawable/logout"
-                android:layout_marginTop="32dp"
+                app:cornerRadius="10dp"
+                app:icon="@drawable/logout"                android:layout_marginTop="12dp"
                 style="@style/Widget.Material3.Button.OutlinedButton" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_delete_account"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                app:cornerRadius="10dp"
                 android:text="Delete Account"
                 android:textColor="@android:color/holo_red_dark"
-                android:icon="@drawable/delete"
+                app:icon="@drawable/delete"
                 android:layout_marginTop="12dp"
                 style="@style/Widget.Material3.Button.OutlinedButton" />
 

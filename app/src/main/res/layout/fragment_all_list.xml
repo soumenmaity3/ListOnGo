@@ -3,14 +3,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Fragment.AllListFragment">
-
-    <!-- TODO: Update blank fragment layout -->
+    tools:context=".Fragment.AllListF.AllListFragment">
 <TextView
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:text="AllList"
+    android:text="AllList is Empty"
     android:layout_gravity="center"
     android:textSize="30dp"
+    android:visibility="gone"
     android:textStyle="bold"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/AllListRecycler"/>
+
 </FrameLayout>

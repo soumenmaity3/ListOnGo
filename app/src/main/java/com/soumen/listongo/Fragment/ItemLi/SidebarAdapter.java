@@ -1,4 +1,4 @@
-package com.soumen.listongo.Fragment;
+package com.soumen.listongo.Fragment.ItemLi;
 
 import android.view.LayoutInflater;
 import android.view.View;

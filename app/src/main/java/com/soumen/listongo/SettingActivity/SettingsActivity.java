@@ -1,9 +1,9 @@
-package com.soumen.listongo;
+package com.soumen.listongo.SettingActivity;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.ActivityManager;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
@@ -21,14 +21,16 @@ import com.google.android.material.textfield.MaterialAutoCompleteTextView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textview.MaterialTextView;
 import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.messaging.FirebaseMessagingService;
-import com.soumen.listongo.SettingActivity.AboutActivity;
-import com.soumen.listongo.SettingActivity.ContactSupportActivity;
-import com.soumen.listongo.SettingActivity.FeedbackActivity;
-import com.soumen.listongo.SettingActivity.PrivacyPolicyActivity;
+import com.soumen.listongo.ApiClient;
+import com.soumen.listongo.ApiService;
+import com.soumen.listongo.MainActivity;
+import com.soumen.listongo.OptionActivity;
+import com.soumen.listongo.R;
+import com.soumen.listongo.SignUpActivity;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -46,7 +48,7 @@ import retrofit2.Response;
 
 public class SettingsActivity extends AppCompatActivity {
     private static final int REQUEST_CODE=1000;
-    MaterialButton btnContact,btnPrivacy,btnAbout,btnFeedback,btnDelete,btnLogout;
+    MaterialButton btnContact,btnPrivacy,btnAbout,btnFeedback,btnDelete,btnLogout,btnClear;
     @SuppressLint({"MissingInflatedId","WrongViewCast"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +80,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         btnDelete=findViewById(R.id.btn_delete_account);
         btnLogout=findViewById(R.id.btn_logout);
-
+        btnClear=findViewById(R.id.btn_clear_list);
 
 
         PackageInfo packageInfo = null;
@@ -257,6 +259,22 @@ public class SettingsActivity extends AppCompatActivity {
         });
 
 
+        btnClear.setOnClickListener(v->{
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Alert")
+                    .setMessage("If you click 'OK', you will lose your entire list. This action cannot be undone.")
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            clearList(userId);
+                        }
+                    })
+                    .setNegativeButton("Cancel", null)
+                    .show();
+
+        });
+
+
     }
 
     private void enableNotifications() {
@@ -311,9 +329,9 @@ public class SettingsActivity extends AppCompatActivity {
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);
                     finish();
-                } else {
+                } else if(response.code()==500){
                     // Handle error response
-                    Toast.makeText(SettingsActivity.this, "Failed to delete account: " + response.code(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(SettingsActivity.this, "First Clear you list. " , Toast.LENGTH_LONG).show();
                 }
             }
 
@@ -324,5 +342,25 @@ public class SettingsActivity extends AppCompatActivity {
         });
     }
 
+    public void clearList(Long userId) {
+        ApiService apiService = ApiClient.getInstance().create(ApiService.class);
+        Call<ResponseBody> clear = apiService.clearList(userId);
+
+        clear.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(SettingsActivity.this, "✅ Your list has been cleared.", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(SettingsActivity.this, "❌ Failed to clear list. Try again.", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(SettingsActivity.this, "🚫 Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
 
 }

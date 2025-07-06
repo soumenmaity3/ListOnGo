@@ -15,13 +15,14 @@ import com.bumptech.glide.Glide;
 import com.soumen.listongo.R;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class CartItemAdapter extends RecyclerView.Adapter<CartItemAdapter.viewHolder> {
     private Context context;
-    private ArrayList<CartModel> arrCart;
+    private List<CartModel> arrCart;
     String image_url;
 
-    public CartItemAdapter(Context context, ArrayList<CartModel> arrCart, String image_url) {
+    public CartItemAdapter(Context context, List<CartModel> arrCart, String image_url) {
         this.context = context;
         this.arrCart = arrCart;
         this.image_url = image_url;

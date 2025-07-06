@@ -7,7 +7,6 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.CancellationSignal;
 import android.util.Log;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -24,6 +23,7 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.checkbox.MaterialCheckBox;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textview.MaterialTextView;
+import com.soumen.listongo.SettingActivity.SettingsUtil;
 
 import java.io.IOException;
 import java.util.concurrent.Executor;

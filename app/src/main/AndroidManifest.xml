@@ -33,7 +33,7 @@
             android:name=".SettingActivity.ContactSupportActivity"
             android:exported="false" />
         <activity
-            android:name=".SettingsActivity"
+            android:name=".SettingActivity.SettingsActivity"
             android:exported="false" />
         <activity
             android:name=".ResetActivity"

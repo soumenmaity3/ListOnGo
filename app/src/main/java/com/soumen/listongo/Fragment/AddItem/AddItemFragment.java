@@ -1,14 +1,11 @@
-package com.soumen.listongo.Fragment;
+package com.soumen.listongo.Fragment.AddItem;
 
 import static android.app.Activity.RESULT_OK;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
-import static com.google.android.material.internal.ViewUtils.hideKeyboard;
-
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -16,11 +13,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.util.Log;
@@ -29,11 +21,14 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
+
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.MaterialAutoCompleteTextView;
@@ -43,10 +38,8 @@ import com.google.gson.Gson;
 import com.soumen.listongo.ApiClient;
 import com.soumen.listongo.ApiService;
 import com.soumen.listongo.R;
-import com.soumen.listongo.SettingsUtil;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -108,10 +101,11 @@ public class AddItemFragment extends Fragment {
                 return;
             }
 
-            addProduct();
+            String title=edtTitle.getText().toString().trim().toLowerCase();
+            isPresent(title);
         });
 
-        String[] categories = {"Soft Drinks", "Sweets & Chips","Fashion", "Fresh Vegetable", "Fresh Fruits", "Dry Fruits", "Flowers & Leaves", "Body Care", "Exotics", "Coriander & Others", "Dairy, Brade & Eggs", "Electronics", "Atta, Rice & Dal", "Bakery & Brade", "Puja Store"};
+        String[] categories = {"Soft Drinks","Medicine", "Sweets & Chips","Fashion", "Fresh Vegetable","Spices","Husk Store", "Fresh Fruits", "Dry Fruits", "Flowers & Leaves", "Body Care", "Exotics", "Coriander & Others", "Dairy, Brade & Eggs", "Electronics", "Atta, Rice & Dal", "Bakery & Brade", "Puja Store"};
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), R.layout.drop_down_item, categories);
         dropCategory.setAdapter(adapter);
 
@@ -153,6 +147,27 @@ public class AddItemFragment extends Fragment {
                 imageUri = selectedImageUri;  // declare imageUri as a class-level variable
             }
         }
+    }
+
+    private void isPresent(String title){
+        ApiService apiService=ApiClient.getInstance().create(ApiService.class);
+        Call<ResponseBody> isPresent= apiService.isPresent(title);
+        isPresent.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                Log.d("AddResponse", String.valueOf(response.code()));
+                if (response.code()==200) {
+                    addProduct();
+                }else {
+                    Toast.makeText(getContext(), "This product already exist", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+
+            }
+        });
     }
 
 
@@ -278,6 +293,7 @@ public class AddItemFragment extends Fragment {
         }
         return result;
     }
+
 
 
 }

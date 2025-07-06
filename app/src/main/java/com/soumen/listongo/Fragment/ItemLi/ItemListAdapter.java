@@ -1,9 +1,4 @@
-package com.soumen.listongo.Fragment;
-
-import static android.view.View.GONE;
-import static android.view.View.VISIBLE;
-
-import static java.lang.System.load;
+package com.soumen.listongo.Fragment.ItemLi;
 
 import android.app.Activity;
 import android.content.Context;
@@ -14,7 +9,6 @@ import android.widget.*;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.room.Room;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -90,10 +84,15 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.Produc
                     } else {
                         cartModel.setQuantity(1);
                         db.cartDao().insert(cartModel);
-                        ((Activity) context).runOnUiThread(()->{
-                            Toast.makeText(context, "Add to cart", Toast.LENGTH_SHORT).show();
-                        });
                     }
+                    ((Activity) context).runOnUiThread(() -> {
+                        btnAdd.setEnabled(false);
+                        btnAdd.setText("Carted");
+                        if (existing == null) {
+                            Toast.makeText(context, "Added to cart", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
                 }).start();
 
             });

@@ -1,15 +1,9 @@
 package com.soumen.listongo.ForAdmin;
 
-import static android.view.View.GONE;
-import static android.view.View.VISIBLE;
-
 import android.annotation.SuppressLint;
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.*;
-import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AlertDialog;
@@ -17,25 +11,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.tabs.TabLayout;
-import com.soumen.listongo.ApiClient;
-import com.soumen.listongo.ApiService;
 import com.soumen.listongo.ForAdmin.viewfragment.ViewpagerAdminAdapter;
-import com.soumen.listongo.MainActivity;
 import com.soumen.listongo.R;
-import com.soumen.listongo.SettingsUtil;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import com.soumen.listongo.SettingActivity.SettingsUtil;
 
 public class AdminActivity extends AppCompatActivity {
 

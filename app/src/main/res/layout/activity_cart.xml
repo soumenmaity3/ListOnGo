@@ -6,7 +6,8 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ForCart.CartActivity">
+    tools:context=".ForCart.CartActivity"
+    android:padding="16dp">
 
     <!-- Toolbar -->
     <com.google.android.material.appbar.MaterialToolbar
@@ -21,22 +22,38 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
+    <!-- Optional List Name -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Enter List Name like (Meat Bazar) {Optional}"
+        android:layout_marginTop="12dp"
+        app:layout_constraintTop_toBottomOf="@id/cartToolbar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edtListName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text" />
+    </com.google.android.material.textfield.TextInputLayout>
 
     <!-- Title -->
-
-    <!-- RecyclerView for Cart Items -->
     <TextView
         android:id="@+id/txt_cart_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="120dp"
-        android:layout_marginTop="16dp"
         android:text="Items in Your Cart"
         android:textSize="20sp"
         android:textStyle="bold"
+        android:layout_marginTop="12dp"
+        app:layout_constraintTop_toBottomOf="@id/textInputLayout"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/cartToolbar" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
+    <!-- RecyclerView -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_cart_items"
         android:layout_width="0dp"
@@ -58,13 +75,15 @@
         android:padding="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintEnd_toEndOf="parent"
+        android:elevation="4dp"
+        android:layout_marginTop="8dp">
 
         <!-- Total Row -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp">
+            android:layout_marginBottom="12dp">
 
             <TextView
                 android:id="@+id/total_price_label"
@@ -95,7 +114,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Add List"
-            android:textColor="@color/white"
+            android:textColor="@android:color/white"
             android:backgroundTint="@color/button"
             app:cornerRadius="12dp"
             app:icon="@drawable/cart"

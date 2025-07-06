@@ -4,10 +4,8 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
 import android.annotation.SuppressLint;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.widget.*;
 
@@ -25,10 +23,12 @@ import androidx.fragment.app.FragmentTransaction;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.soumen.listongo.ForAdmin.AdminActivity;
-import com.soumen.listongo.Fragment.AddItemFragment;
-import com.soumen.listongo.Fragment.AllListFragment;
-import com.soumen.listongo.Fragment.ItemFragment;
+import com.soumen.listongo.Fragment.AddItem.AddItemFragment;
+import com.soumen.listongo.Fragment.AllListF.AllListFragment;
+import com.soumen.listongo.Fragment.ItemLi.ItemFragment;
 import com.soumen.listongo.Fragment.ProfileFragment;
+import com.soumen.listongo.SettingActivity.SettingsActivity;
+import com.soumen.listongo.SettingActivity.SettingsUtil;
 
 import java.io.IOException;
 

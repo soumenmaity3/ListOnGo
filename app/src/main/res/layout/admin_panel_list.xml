@@ -32,7 +32,7 @@
 
             <!-- Texts (Title and Subtitle) -->
             <LinearLayout
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:orientation="vertical">
@@ -46,7 +46,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Title"
-                        android:textColor="@color/black"
                         android:textStyle="bold"
                         android:textSize="14sp"/>
 
@@ -85,14 +84,15 @@
 
             <!-- Button -->
             <com.google.android.material.button.MaterialButton
-                card_view:cornerRadius="10dp"
                 android:id="@+id/action_button"
+                style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Action"
-                style="?android:attr/buttonBarButtonStyle"
+                android:layout_marginRight="10dp"
                 android:backgroundTint="@color/button"
-                android:textColor="#FFFFFF" />
+                android:text="Add"
+                android:textColor="#FFFFFF"
+                card_view:cornerRadius="10dp" />
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>

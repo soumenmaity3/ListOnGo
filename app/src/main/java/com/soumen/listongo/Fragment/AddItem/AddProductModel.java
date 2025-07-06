@@ -1,4 +1,4 @@
-package com.soumen.listongo.Fragment;
+package com.soumen.listongo.Fragment.AddItem;
 
 public class AddProductModel {
     private String title;

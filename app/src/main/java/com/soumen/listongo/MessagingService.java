@@ -14,6 +14,11 @@ import androidx.core.app.NotificationCompat;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class MessagingService extends FirebaseMessagingService {
     private static final @org.jspecify.annotations.NonNull String CHANNEL_ID = "fcm_message";
 
@@ -40,31 +45,71 @@ public class MessagingService extends FirebaseMessagingService {
         if (!notificationsEnabled) {
             return;
         }
+        SecurePrefsHelper prefsHelper = new SecurePrefsHelper(this);
+        String email=prefsHelper.getEmail();
+        String password=prefsHelper.getPassword();
+        Long id=prefsHelper.getUserId();
+        String userName=prefsHelper.getUsername();
 
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        login(email, password, new LoginCallBack() {
+            @Override
+            public void onSuccess() {
+                Intent intent = new Intent(MessagingService.this, MainActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                intent.putExtra("email",email);
+                intent.putExtra("UserId",id);
+                intent.putExtra("userName",userName);
+                PendingIntent pendingIntent = PendingIntent.getActivity(MessagingService.this, 0, intent,
+                        PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE);
 
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent,
-                PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE);
+                NotificationCompat.Builder notificationBuilder =
+                        new NotificationCompat.Builder(MessagingService.this, CHANNEL_ID)
+                                .setSmallIcon(R.drawable.brand)
+                                .setContentTitle("ListOnGo")
+                                .setContentText(messageBody)
+                                .setAutoCancel(true)
+                                .setContentIntent(pendingIntent);
 
-        NotificationCompat.Builder notificationBuilder =
-                new NotificationCompat.Builder(this, CHANNEL_ID)
-                        .setSmallIcon(R.drawable.brand)
-                        .setContentTitle("ListOnGo")
-                        .setContentText(messageBody)
-                        .setAutoCancel(true)
-                        .setContentIntent(pendingIntent);
+                NotificationManager notificationManager =
+                        (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-        NotificationManager notificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    NotificationChannel channel = new NotificationChannel(
+                            CHANNEL_ID, "FCM Notifications", NotificationManager.IMPORTANCE_DEFAULT);
+                    notificationManager.createNotificationChannel(channel);
+                }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(
-                    CHANNEL_ID, "FCM Notifications", NotificationManager.IMPORTANCE_DEFAULT);
-            notificationManager.createNotificationChannel(channel);
-        }
+                notificationManager.notify(0, notificationBuilder.build());
+            }
 
-        notificationManager.notify(0, notificationBuilder.build());
+            @Override
+            public void onFailure(String error) {
+
+            }
+        });
+
+
     }
 
+    public void login(String email,String password,LoginCallBack loginCallBack){
+        LogInUserModel logInUserModel=new LogInUserModel(email,password);
+        ApiService apiService=ApiClient.getInstance().create(ApiService.class);
+        Call<ResponseBody> loginSuc=apiService.loginUser(logInUserModel);
+        loginSuc.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    loginCallBack.onSuccess();
+                }
+                else{
+                    loginCallBack.onFailure("Failed with code"+response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+
+            }
+        });
+    }
 }

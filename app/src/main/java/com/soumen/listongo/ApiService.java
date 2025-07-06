@@ -1,7 +1,9 @@
 package com.soumen.listongo;
 
 import com.soumen.listongo.ForAdmin.AdminProductModel;
-import com.soumen.listongo.Fragment.ProductListModel;
+import com.soumen.listongo.ForCart.ForAllListModel;
+import com.soumen.listongo.Fragment.AllListF.AllListFragmentModel;
+import com.soumen.listongo.Fragment.ItemLi.ProductListModel;
 
 import java.util.List;
 
@@ -96,4 +98,26 @@ public interface ApiService {
     Call<List<ProductListModel>> getProductByNickname(
             @Query("nickname") String nickname);
 
+    @GET("product/is-exist/{title}")
+    Call<ResponseBody> isPresent(
+            @Path("title") String title
+    );
+
+    @POST("list/create-list")
+    Call<ResponseBody> addList(
+            @Body List<ForAllListModel> allListModelList,
+            @Query("userId") Long userId
+    );
+
+    @GET("list/grouped-by-time")
+    Call<List<AllListFragmentModel>> getGroupedList(@Query("userId") Long userId);
+
+    @DELETE("list/clear-list")
+    Call<ResponseBody> clearList(@Query("userId") Long userId);
+
+    @PUT("product/update")
+    Call<ResponseBody> update(@Query("price") double price,
+                              @Query("description") String description,
+                              @Query("id") Long id,
+                              @Query("nickName") String nickName);
 }

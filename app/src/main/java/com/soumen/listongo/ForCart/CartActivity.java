@@ -1,9 +1,11 @@
 package com.soumen.listongo.ForCart;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.widget.*;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -13,19 +15,30 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.TextInputEditText;
+import com.soumen.listongo.ApiClient;
+import com.soumen.listongo.ApiService;
 import com.soumen.listongo.R;
-import com.soumen.listongo.SettingsUtil;
+import com.soumen.listongo.SettingActivity.SettingsUtil;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class CartActivity extends AppCompatActivity {
 
     private RecyclerView cartList;
     private CartItemAdapter adapter;
-    private ArrayList<CartModel> cartItems = new ArrayList<>();
+    private List<CartModel> cartItems = new ArrayList<>();
     TextView totalPriceText;
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         SettingsUtil.applyTheme(this);
@@ -39,6 +52,7 @@ public class CartActivity extends AppCompatActivity {
             return insets;
         });
         String image_url=getString(R.string.server_api);
+        Long id= getIntent().getLongExtra("userId",0);
 
         MaterialToolbar toolbar = findViewById(R.id.cartToolbar);
         MaterialButton btnAddList=findViewById(R.id.button_cart);
@@ -51,16 +65,54 @@ public class CartActivity extends AppCompatActivity {
         cartList.setAdapter(adapter);
 
         btnAddList.setOnClickListener(v -> {
-            Toast.makeText(this, "Add list Done", Toast.LENGTH_SHORT).show();
-            AppDatabase db = AppDatabaseClient.getInstance(this);
-            new Thread(() -> {
-                db.cartDao().delete();
-                runOnUiThread(() -> {
-                    cartItems.clear();
-                    adapter.notifyDataSetChanged();
-                    totalPriceText.setText("₹0.00");
-                });
-            }).start();
+
+            List<ForAllListModel> allListModels=new ArrayList<>();
+            TextInputEditText edtListName=findViewById(R.id.edtListName);
+            String listName=edtListName.getText().toString();
+
+
+            for (CartModel  item: cartItems) {
+                ForAllListModel model=new ForAllListModel();
+                model.setTitle(item.getTitle());
+                model.setPrice(item.getPrice());
+                model.setQuantity(item.getQuantity());
+                model.setList_name(listName);
+                allListModels.add(model);
+            }
+            if (allListModels.isEmpty()) {
+                Toast.makeText(this, "Add Some product", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            ApiService apiService= ApiClient.getInstance().create(ApiService.class);
+            Call<ResponseBody> createList=apiService.addList(allListModels,id);
+            createList.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if (response.isSuccessful()) {
+                        Toast.makeText(CartActivity.this, "List uploaded successfully", Toast.LENGTH_SHORT).show();
+                        AppDatabase db = AppDatabaseClient.getInstance(CartActivity.this);
+                        new Thread(() -> {
+                            db.cartDao().delete();
+                            runOnUiThread(() -> {
+                                cartItems.clear();
+                                edtListName.setText("");
+                                adapter.notifyDataSetChanged();
+                                totalPriceText.setText("₹0.00");
+                            });
+                        }).start();
+                    }else {
+                        Toast.makeText(CartActivity.this, "Upload failed: " + response.code(), Toast.LENGTH_LONG).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+
+                }
+            });
+
+
         });
         observeCartItems();
 

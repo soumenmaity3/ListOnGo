@@ -27,7 +27,7 @@ public class ViewpagerAdminAdapter extends FragmentPagerAdapter {
                 fragment = new ApproveByYouFragment();
                 break;
             default:
-                fragment = new Fragment(); // fallback
+                fragment = new EditProductDetailsFragment(); // fallback
         }
 
         // Pass userId to the fragment
@@ -39,7 +39,7 @@ public class ViewpagerAdminAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return 2;
+        return 3;
     }
 
 
@@ -47,8 +47,10 @@ public class ViewpagerAdminAdapter extends FragmentPagerAdapter {
     public CharSequence getPageTitle(int position) {
         if (position == 0) {
             return "Pending List";
-        }else {
+        }else if (position==1){
             return "Approve By You";
+        }else {
+            return "Edit Product";
         }
     }
 }
