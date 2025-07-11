@@ -76,6 +76,7 @@ public class ItemFragment extends Fragment {
                 new SidebarItem(R.drawable.snacks, "Sweets & Chips"),
                 new SidebarItem(R.drawable.brand, "Fashion"),
                 new SidebarItem(R.drawable.vegetables, "Fresh Vegetable"),
+                new SidebarItem(R.drawable.non_veg,"Non Veg"),
                 new SidebarItem(R.drawable.husk,"Husk Store"),
                 new SidebarItem(R.drawable.spices, "Spices"),
                 new SidebarItem(R.drawable.fresh_fruits, "Fresh Fruits"),

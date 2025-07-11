@@ -105,7 +105,7 @@ public class AddItemFragment extends Fragment {
             isPresent(title);
         });
 
-        String[] categories = {"Soft Drinks","Medicine", "Sweets & Chips","Fashion", "Fresh Vegetable","Spices","Husk Store", "Fresh Fruits", "Dry Fruits", "Flowers & Leaves", "Body Care", "Exotics", "Coriander & Others", "Dairy, Brade & Eggs", "Electronics", "Atta, Rice & Dal", "Bakery & Brade", "Puja Store"};
+        String[] categories = {"Soft Drinks","Medicine", "Sweets & Chips","Fashion", "Fresh Vegetable","Non Veg","Spices","Husk Store", "Fresh Fruits", "Dry Fruits", "Flowers & Leaves", "Body Care", "Exotics", "Coriander & Others", "Dairy, Brade & Eggs", "Electronics", "Atta, Rice & Dal", "Bakery & Brade", "Puja Store"};
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), R.layout.drop_down_item, categories);
         dropCategory.setAdapter(adapter);
 
