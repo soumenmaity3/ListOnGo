@@ -99,6 +99,7 @@ public class EditProductAdapter extends RecyclerView.Adapter<EditProductAdapter.
                                         } else {
                                             Toast.makeText(context, "Update failed", Toast.LENGTH_SHORT).show();
                                         }
+
                                         dialog.dismiss();
                                     }
 
