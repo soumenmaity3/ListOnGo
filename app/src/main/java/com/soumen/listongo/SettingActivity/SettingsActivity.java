@@ -194,11 +194,16 @@ public class SettingsActivity extends AppCompatActivity {
         SharedPreferences prefs3 = getSharedPreferences("app_settings", MODE_PRIVATE);
 
 // Load and set saved switch state
-        boolean notificationEnabled = prefs3.getBoolean("notification_enable", false);
-        notification.setChecked(notificationEnabled);
+        boolean permissionGranted = ContextCompat.checkSelfPermission(
+                this, Manifest.permission.POST_NOTIFICATIONS
+        ) == PackageManager.PERMISSION_GRANTED;
+
+        boolean savedPreference = prefs3.getBoolean("notification_enable", false);
+        notification.setChecked(permissionGranted && savedPreference);
+
 
         notification.setOnCheckedChangeListener((compoundButton, isChecked) -> {
-            if (isChecked) {
+            if (!isChecked) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                     if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
                             != PackageManager.PERMISSION_GRANTED) {
