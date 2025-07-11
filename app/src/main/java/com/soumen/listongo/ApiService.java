@@ -120,4 +120,8 @@ public interface ApiService {
                               @Query("description") String description,
                               @Query("id") Long id,
                               @Query("nickName") String nickName);
+    @DELETE("product/delete")
+    Call<ResponseBody> deleteProduct(
+            @Query("proId") Long proId
+    );
 }

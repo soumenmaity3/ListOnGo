@@ -1,7 +1,10 @@
 package com.soumen.listongo.ForAdmin.viewfragment;
 
+import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,7 +49,7 @@ public class EditProductAdapter extends RecyclerView.Adapter<EditProductAdapter.
     }
 
     @Override
-    public void onBindViewHolder(@NonNull EditProductAdapter.viewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull EditProductAdapter.viewHolder holder, @SuppressLint("RecyclerView") int position) {
         AdminProductModel model = arrayList.get(position);
         String title = model.getTitle();
         String description = model.getDescription();
@@ -75,32 +78,65 @@ public class EditProductAdapter extends RecyclerView.Adapter<EditProductAdapter.
             edtPrice.setText(price);
             edtNickName.setHint("Add nick name like potato-alu.");
             edtDescription.setText(description);
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setTitle("What?")
+                    .setMessage("Delete Or Update")
+                    .setPositiveButton("Update", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialog.show();
+                            btnEditDone.setOnClickListener(vi -> {
+                                double edPrice = Double.parseDouble(edtPrice.getText().toString());
+                                String edDescription = edtDescription.getText().toString();
+                                String edNickName = edtNickName.getText().toString();
+                                ApiService service = ApiClient.getInstance().create(ApiService.class);
+                                Call<ResponseBody> update = service.update(edPrice, edDescription, model.getId(), edNickName);
+                                update.enqueue(new Callback<ResponseBody>() {
+                                    @Override
+                                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                        if (response.isSuccessful()) {
+                                            Toast.makeText(context, "Product updated", Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            Toast.makeText(context, "Update failed", Toast.LENGTH_SHORT).show();
+                                        }
+                                        dialog.dismiss();
+                                    }
 
-            dialog.show();
-            btnEditDone.setOnClickListener(vi -> {
-                double edPrice = Double.parseDouble(edtPrice.getText().toString());
-                String edDescription = edtDescription.getText().toString();
-                String edNickName=edtNickName.getText().toString();
-                ApiService service = ApiClient.getInstance().create(ApiService.class);
-                Call<ResponseBody> update = service.update(edPrice, edDescription, model.getId(), edNickName);
-                update.enqueue(new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        if (response.isSuccessful()) {
-                            Toast.makeText(context, "Product updated", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(context, "Update failed", Toast.LENGTH_SHORT).show();
+                                    @Override
+                                    public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+                                        dialog.dismiss();
+                                        Toast.makeText(context, "Network error: " + throwable.getMessage(), Toast.LENGTH_LONG).show();
+                                    }
+                                });
+                            });
                         }
-                        dialog.dismiss();
-                    }
+                    })
+                    .setNegativeButton("Delete", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            ApiService apiService=ApiClient.getInstance().create(ApiService.class);
+                            Call<ResponseBody> deleteProduct=apiService.deleteProduct(model.getId());
+                            deleteProduct.enqueue(new Callback<ResponseBody>() {
+                                @Override
+                                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                    if (response.isSuccessful()){
+                                    Toast.makeText(context, "Deleted Done", Toast.LENGTH_SHORT).show();
+                                    arrayList.remove(position);
+                                    notifyItemRemoved(position);
+                                    }
+                                    else
+                                        Toast.makeText(context, "Don't find this product", Toast.LENGTH_SHORT).show();
+                                }
 
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable throwable) {
-                        dialog.dismiss();
-                        Toast.makeText(context, "Network error: " + throwable.getMessage(), Toast.LENGTH_LONG).show();
-                    }
-                });
-            });
+                                @Override
+                                public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+
+                                }
+                            });
+                        }
+                    })
+                    .show();
+
 
         });
     }

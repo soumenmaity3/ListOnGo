@@ -92,6 +92,7 @@ public class CartActivity extends AppCompatActivity {
                     if (response.isSuccessful()) {
                         Toast.makeText(CartActivity.this, "List uploaded successfully", Toast.LENGTH_SHORT).show();
                         AppDatabase db = AppDatabaseClient.getInstance(CartActivity.this);
+                        btnAddList.setEnabled(false);
                         new Thread(() -> {
                             db.cartDao().delete();
                             runOnUiThread(() -> {

@@ -25,7 +25,7 @@ public class AllListFragmentAdapter extends RecyclerView.Adapter<AllListFragment
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView dateText,listName;
+        TextView dateText,listName,listTotal;
         RecyclerView childRecycler;
         LinearLayout itemCartGroup;
 
@@ -35,6 +35,7 @@ public class AllListFragmentAdapter extends RecyclerView.Adapter<AllListFragment
             dateText = itemView.findViewById(R.id.date_text);
             childRecycler = itemView.findViewById(R.id.child_recycler);
             itemCartGroup=itemView.findViewById(R.id.itemCartGroup);
+            listTotal=itemView.findViewById(R.id.listPrice);
         }
     }
 
@@ -51,8 +52,8 @@ public class AllListFragmentAdapter extends RecyclerView.Adapter<AllListFragment
 
         holder.dateText.setText(model.getDateTime());
         holder.listName.setText(model.getListName());
-
         List<AllListParentModel> childItems = new ArrayList<>();
+        double total=0;
         for (ForAllListModel item : model.getItems()) {
             childItems.add(new AllListParentModel(
                     Math.toIntExact(item.getId()),
@@ -62,7 +63,9 @@ public class AllListFragmentAdapter extends RecyclerView.Adapter<AllListFragment
                     item.getQuantity(),
                     item.getList_name()
             ));
+            total+=(item.getPrice()*item.getQuantity());
         }
+        holder.listTotal.setText("Total: ₹"+String.valueOf(total));
 
         AllListParentAdapter childAdapter = new AllListParentAdapter(childItems);
         holder.childRecycler.setLayoutManager(new LinearLayoutManager(context));

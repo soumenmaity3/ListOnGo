@@ -5,8 +5,7 @@
     android:orientation="vertical"
     android:padding="12dp"
     android:id="@+id/itemCartGroup"
-    android:elevation="2dp"
-    android:layout_margin="8dp">
+    android:elevation="2dp">
 
     <!-- Date and Time Text -->
     <RelativeLayout
@@ -18,16 +17,27 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="12 May 2025, 10:30 AM"
-        android:textSize="16sp"
+        android:textSize="14sp"
         android:textStyle="bold"
         android:paddingBottom="8dp" />
+        <TextView
+            android:id="@+id/listPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Total: ₹200"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@+id/date_text"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:paddingBottom="8dp" />
+
         <TextView
             android:id="@+id/listName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="meat bazar"
             android:layout_alignParentRight="true"
-            android:textSize="16sp"
+            android:textSize="14sp"
             android:textStyle="bold"
             android:paddingBottom="8dp" />
 
