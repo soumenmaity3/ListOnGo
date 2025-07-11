@@ -9,6 +9,7 @@ import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -36,6 +37,7 @@ public class PendingFragment extends Fragment {
     ArrayList<AdminProductModel> arrayProduct;
     AdminListAdapter adapter;
     TextView txtDone;
+    SwipeRefreshLayout pendingSwipe;
 
     public PendingFragment() {
         // Required empty public constructor
@@ -49,6 +51,7 @@ public class PendingFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_pending, container, false);
         recyclerView = view.findViewById(R.id.adminPanel);
         txtDone = view.findViewById(R.id.txtDone);
+        pendingSwipe=view.findViewById(R.id.pendingSwipe);
         arrayProduct = new ArrayList<>();
 
         Long userId=getArguments().getLong("UserId");
@@ -61,6 +64,7 @@ public class PendingFragment extends Fragment {
 
 // Call API
         getAdminProduct();
+        pendingSwipe.setOnRefreshListener(()->getAdminProduct());
         return view;
     }
 
@@ -74,8 +78,9 @@ public class PendingFragment extends Fragment {
                     txtDone.setVisibility(GONE);
                     arrayProduct.clear();
                     arrayProduct.addAll(response.body());
-                    Log.d("AdminResponse", response.body().toString());
                     adapter.notifyDataSetChanged();
+                    pendingSwipe.setRefreshing(false);
+
                 } else {
                     Toast.makeText(getContext(), "Faild to Fetch List", Toast.LENGTH_SHORT).show();
                 }

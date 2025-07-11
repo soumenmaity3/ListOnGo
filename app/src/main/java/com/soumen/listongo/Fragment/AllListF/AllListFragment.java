@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,6 +29,7 @@ public class AllListFragment extends Fragment {
     private RecyclerView parentRecycler;
     private AllListFragmentAdapter parentAdapter;
     private List<AllListFragmentModel> data = new ArrayList<>();
+    SwipeRefreshLayout allListSwipe;
 
     public AllListFragment() {}
 
@@ -35,11 +37,13 @@ public class AllListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_all_list, container, false);
         parentRecycler = view.findViewById(R.id.AllListRecycler);
+        allListSwipe=view.findViewById(R.id.allListSwipe);
         parentRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
 
         Long userId=getArguments().getLong("UserId");
 
         fetchData(userId);
+        allListSwipe.setOnRefreshListener(()->fetchData(userId));
 
         return view;
     }
@@ -59,6 +63,7 @@ public class AllListFragment extends Fragment {
 
                     parentAdapter = new AllListFragmentAdapter(getContext(), data);
                     parentRecycler.setAdapter(parentAdapter);
+                    allListSwipe.setRefreshing(false);
                 }
             }
 

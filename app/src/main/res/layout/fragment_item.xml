@@ -88,16 +88,19 @@
                             android:src="@drawable/right_arrow" />
                     </RelativeLayout>
                 </com.google.android.material.appbar.MaterialToolbar>
-
+                <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/swipeLayout">
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/itemRecycleList"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
+                </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 
-    <!-- 🔄 ProgressBar overlay -->
     <ProgressBar
         android:id="@+id/itemProgress"
         android:layout_width="wrap_content"

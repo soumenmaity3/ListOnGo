@@ -10,6 +10,7 @@ import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -45,6 +46,7 @@ public class ItemFragment extends Fragment {
     TextInputEditText searchLayout;
     MaterialToolbar cart_tool;
     ProgressBar itemProgress;
+    SwipeRefreshLayout swipeLayout;
 
     public ItemFragment() {
     }
@@ -57,6 +59,7 @@ public class ItemFragment extends Fragment {
         api_url = getString(R.string.server_api);
         searchLayout = view.findViewById(R.id.searchEditText);
         itemProgress = view.findViewById(R.id.itemProgress);
+        swipeLayout=view.findViewById(R.id.swipeLayout);
         Long userId= getArguments().getLong("UserId");
         // Sidebar
         RecyclerView sidebar = view.findViewById(R.id.sidebarRecyclerView);
@@ -182,6 +185,8 @@ public class ItemFragment extends Fragment {
 
         fetchProducts();
 
+        swipeLayout.setOnRefreshListener(()->{fetchProducts();});
+
         return view;
     }
 
@@ -198,6 +203,7 @@ public class ItemFragment extends Fragment {
                     productList.addAll(response.body());
                     adapter.notifyDataSetChanged();
                     itemProgress.setVisibility(GONE);
+                    swipeLayout.setRefreshing(false);
                 } else {
                     Toast.makeText(getContext(), "Failed to fetch products", Toast.LENGTH_SHORT).show();
                 }

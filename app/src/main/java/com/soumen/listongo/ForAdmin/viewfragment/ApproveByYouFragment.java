@@ -9,6 +9,7 @@ import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -33,6 +34,8 @@ public class ApproveByYouFragment extends Fragment {
     RecyclerView recycleApprove;
     ArrayList<AdminProductModel> arrayList;
     AdminListAdapter adapter;
+    SwipeRefreshLayout approveSwipe;
+
     public ApproveByYouFragment() {
     }
 
@@ -40,17 +43,19 @@ public class ApproveByYouFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view= inflater.inflate(R.layout.fragment_approve_by_you, container, false);
-        recycleApprove=view.findViewById(R.id.recycleApprove);
-        arrayList=new ArrayList<>();
+        View view = inflater.inflate(R.layout.fragment_approve_by_you, container, false);
+        recycleApprove = view.findViewById(R.id.recycleApprove);
+        approveSwipe = view.findViewById(R.id.approveSwipe);
+        arrayList = new ArrayList<>();
         Long userId = getArguments().getLong("UserId");
-        String image_url=getString(R.string.server_api);
-        adapter = new AdminListAdapter(arrayList, getContext(),userId,image_url);
+        String image_url = getString(R.string.server_api);
+        adapter = new AdminListAdapter(arrayList, getContext(), userId, image_url);
         recycleApprove.setLayoutManager(new LinearLayoutManager(getContext()));
         recycleApprove.setAdapter(adapter);
 
         if (userId != -1) {
             approveList(userId);
+            approveSwipe.setOnRefreshListener(() -> approveList(userId));
         } else {
             Toast.makeText(getContext(), "User ID not found", Toast.LENGTH_SHORT).show();
         }
@@ -58,9 +63,9 @@ public class ApproveByYouFragment extends Fragment {
     }
 
 
-    private void approveList(Long userId){
+    private void approveList(Long userId) {
         ApiService apiService = ApiClient.getInstance().create(ApiService.class);
-        Call<List<AdminProductModel>> approveByU=apiService.approveProduct(userId);
+        Call<List<AdminProductModel>> approveByU = apiService.approveProduct(userId);
         approveByU.enqueue(new Callback<List<AdminProductModel>>() {
             @Override
             public void onResponse(Call<List<AdminProductModel>> call, Response<List<AdminProductModel>> response) {
@@ -68,6 +73,7 @@ public class ApproveByYouFragment extends Fragment {
                     arrayList.clear();
                     arrayList.addAll(response.body());
                     adapter.notifyDataSetChanged();
+                    approveSwipe.setRefreshing(false);
                 } else {
                     Toast.makeText(getContext(), "Failed to Fetch List", Toast.LENGTH_SHORT).show();
                 }

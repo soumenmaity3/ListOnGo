@@ -12,7 +12,7 @@ android {
         applicationId = "com.soumen.listongo"
         minSdk = 24
         targetSdk = 35
-        versionCode = 3
+        versionCode = 4
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -55,29 +55,31 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.16.0")
     annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
     //lottie file
-    implementation ("com.airbnb.android:lottie:6.4.0")
+    implementation("com.airbnb.android:lottie:6.4.0")
     //retrofit
-    implementation ("com.squareup.retrofit2:retrofit:2.11.0")
-    implementation ("com.squareup.retrofit2:converter-gson:2.11.0")
-    implementation ("com.squareup.retrofit2:converter-scalars:2.11.0")
-    implementation ("com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.11")
-    implementation ("com.squareup.okhttp3:okhttp:4.10.0")
+    implementation("com.squareup.retrofit2:retrofit:2.11.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.11.0")
+    implementation("com.squareup.retrofit2:converter-scalars:2.11.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.11")
+    implementation("com.squareup.okhttp3:okhttp:4.10.0")
     //image
-    implementation ("com.github.bumptech.glide:glide:4.16.0")
-    annotationProcessor ("com.github.bumptech.glide:compiler:4.16.0")
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+    annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
     //Biometric
-    implementation ("androidx.biometric:biometric:1.1.0")
-    implementation ("androidx.security:security-crypto:1.1.0-alpha06")
+    implementation("androidx.biometric:biometric:1.1.0")
+    implementation("androidx.security:security-crypto:1.1.0-alpha06")
     //Notification
-    implementation ("com.google.firebase:firebase-analytics:22.5.0")
-    implementation ("com.google.firebase:firebase-messaging:24.1.1")
+    implementation("com.google.firebase:firebase-analytics:22.5.0")
+    implementation("com.google.firebase:firebase-messaging:24.1.1")
     // Room with LiveData support
-    implementation ("androidx.room:room-runtime:2.6.1")
-    annotationProcessor ("androidx.room:room-compiler:2.6.1")
+    implementation("androidx.room:room-runtime:2.6.1")
+    annotationProcessor("androidx.room:room-compiler:2.6.1")
 // LiveData (comes with lifecycle components)
-    implementation( "androidx.lifecycle:lifecycle-livedata:2.7.0")
-    implementation ("androidx.lifecycle:lifecycle-viewmodel:2.7.0")
-    annotationProcessor ("androidx.lifecycle:lifecycle-compiler:2.7.0")
+    implementation("androidx.lifecycle:lifecycle-livedata:2.7.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel:2.7.0")
+    annotationProcessor("androidx.lifecycle:lifecycle-compiler:2.7.0")
+    //refrash
+    implementation ("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
 
 
 }

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,6 +34,7 @@ public class EditProductDetailsFragment extends Fragment {
     RecyclerView edtRecycler;
     ArrayList<AdminProductModel> arrayList;
     EditProductAdapter adapter;
+    SwipeRefreshLayout editSwipe;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -41,6 +43,7 @@ public class EditProductDetailsFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_edit_product_details, container, false);
         edtRecycler = view.findViewById(R.id.edtRecycler);
+        editSwipe=view.findViewById(R.id.editSwipe);
         Long userId = getArguments().getLong("UserId");
         String image_url = getString(R.string.server_api);
         arrayList = new ArrayList<>();
@@ -49,6 +52,7 @@ public class EditProductDetailsFragment extends Fragment {
         edtRecycler.setAdapter(adapter);
         if (userId != -1) {
             fetchForEdit(userId);
+            editSwipe.setOnRefreshListener(()->fetchForEdit(userId));
         } else {
             Toast.makeText(getContext(), "User ID not found", Toast.LENGTH_SHORT).show();
         }
@@ -65,6 +69,7 @@ public class EditProductDetailsFragment extends Fragment {
                     arrayList.clear();
                     arrayList.addAll(response.body());
                     adapter.notifyDataSetChanged();
+                    editSwipe.setRefreshing(false);
                 } else {
                     Toast.makeText(getContext(), "Failed to Fetch List", Toast.LENGTH_SHORT).show();
                 }
