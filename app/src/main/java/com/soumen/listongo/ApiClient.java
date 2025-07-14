@@ -8,7 +8,7 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 public class ApiClient {
     private static Retrofit retrofit;
-    public static final String baseUrl = "http://192.168.5.150:8080/api/list-on-go/";
+    public static final String baseUrl = "http://192.168.51.150:8080/api/list-on-go/";
 
     public static Retrofit getInstance() {
         if (retrofit == null) {

@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">ListOnGo</string>
-    <string name="server_api">http://192.168.5.150:8080/api</string>
+    <string name="server_api">http://192.168.51.150:8080/api</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string-array name="theme_options">

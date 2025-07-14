@@ -62,7 +62,15 @@ public class ForgotPassword extends AppCompatActivity {
         editTextOtp = findViewById(R.id.editTextOtp);
         editTextPassword=findViewById(R.id.editTextOldPassword);
 
+        int defaultSelection = R.id.radio_old_password;
+
         radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
+            if (checkedId != defaultSelection) {
+                Log.d("RadioChange", "User changed selection from default.");
+                // Optionally update the default selection
+                // defaultSelection = checkedId;
+            }
+
             if (checkedId == R.id.radio_old_password) {
                 layoutOldPassword.setVisibility(View.VISIBLE);
                 layoutOtp.setVisibility(View.GONE);
@@ -75,6 +83,7 @@ public class ForgotPassword extends AppCompatActivity {
                 editTextPassword.setEnabled(false);
             }
         });
+
         radioOtp.setChecked(true);
         btnGetOtp.setOnClickListener(v -> {
             String email = editTextEmail.getText().toString();
@@ -91,6 +100,7 @@ public class ForgotPassword extends AppCompatActivity {
                 @Override
                 public void onTick(long l) {
                     btnGetOtp.setText("Wait: "+l/1000+" s");
+                    btnGetOtp.setEnabled(false);
                 }
 
                 @Override

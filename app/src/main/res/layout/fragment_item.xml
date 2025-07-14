@@ -73,29 +73,33 @@
                             android:layout_height="wrap_content"
                             android:layout_alignParentStart="true"
                             android:layout_centerVertical="true"
-                            android:text="Cart The Item"
+                            android:text="Cart Products"
                             android:textColor="@android:color/black"
                             android:textSize="18sp"
                             android:textStyle="bold|italic" />
 
-                        <ImageView
-                            android:id="@+id/arrowIcon"
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
+                        <com.airbnb.lottie.LottieAnimationView
+                            android:id="@+id/arrowAnimation"
+                            android:layout_width="80dp"
+                            android:layout_height="40dp"
                             android:layout_alignParentEnd="true"
-                            android:layout_centerVertical="true"
-                            android:contentDescription="Arrow"
-                            android:src="@drawable/right_arrow" />
+                            android:contentDescription="Arrow Animation"
+                            android:scaleType="centerCrop"
+                            app:lottie_autoPlay="true"
+                            app:lottie_loop="true"
+                            app:lottie_rawRes="@raw/right_anim" />
                     </RelativeLayout>
                 </com.google.android.material.appbar.MaterialToolbar>
+
                 <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                    android:id="@+id/swipeLayout"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:id="@+id/swipeLayout">
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/itemRecycleList"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_height="match_parent">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/itemRecycleList"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
                 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
             </LinearLayout>
         </LinearLayout>

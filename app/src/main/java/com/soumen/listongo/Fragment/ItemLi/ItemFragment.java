@@ -20,6 +20,8 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.airbnb.lottie.LottieAnimationView;
+import com.airbnb.lottie.LottieDrawable;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.soumen.listongo.ApiClient;
@@ -61,12 +63,16 @@ public class ItemFragment extends Fragment {
         itemProgress = view.findViewById(R.id.itemProgress);
         swipeLayout=view.findViewById(R.id.swipeLayout);
         Long userId= getArguments().getLong("UserId");
+        LottieAnimationView arrowAnim = view.findViewById(R.id.arrowAnimation);
+        arrowAnim.playAnimation(); // To start
+//        arrowAnim.pauseAnimation(); // To pause
+        arrowAnim.setRepeatCount(LottieDrawable.INFINITE);
         // Sidebar
         RecyclerView sidebar = view.findViewById(R.id.sidebarRecyclerView);
         sidebar.setLayoutManager(new LinearLayoutManager(getContext()));
         cart_tool = view.findViewById(R.id.cart_tool);
 
-        cart_tool.setOnClickListener(v -> {
+        arrowAnim.setOnClickListener(v -> {
             Intent intent = new Intent(getContext(), CartActivity.class);
             intent.putExtra("userId",userId);
             startActivity(intent);
