@@ -48,6 +48,8 @@ public class MainActivity extends AppCompatActivity {
     boolean isAdmin2;
     private long backPressedTime;
     private Toast backToast;
+    int credit;
+
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,59 +62,39 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        textUser=findViewById(R.id.username_text);
-        email=getIntent().getStringExtra("email");
-        userId=getIntent().getLongExtra("UserId",1);
-        userName=getIntent().getStringExtra("userName");
+        textUser = findViewById(R.id.username_text);
+        email = getIntent().getStringExtra("email");
+        userId = getIntent().getLongExtra("UserId", 1);
+        userName = getIntent().getStringExtra("userName");
 
         textUser.setText(userName);
-        bottomNavigationView=findViewById(R.id.navItem);
-        frameLayout=findViewById(R.id.nav_host_fragment);
-        loadFragment(new AllListFragment(),true);
-        toolbar=findViewById(R.id.topAppBar);
+        bottomNavigationView = findViewById(R.id.navItem);
+        frameLayout = findViewById(R.id.nav_host_fragment);
+        loadFragment(new AllListFragment(), true);
+        toolbar = findViewById(R.id.topAppBar);
 
+        isAdmin();
 
-
-        toolbar.setOnMenuItemClickListener(v->{
+        toolbar.setOnMenuItemClickListener(v -> {
             if (v.getItemId() == R.id.admin) {
+                if (isAdmin2) {
+                    Intent intent = new Intent(MainActivity.this, AdminActivity.class);
+                    intent.putExtra("UserId", userId);
+                    startActivity(intent);
+                } else {
+                    new AlertDialog.Builder(MainActivity.this)
+                            .setTitle("SORRY")
+                            .setMessage("You are not an admin")
+                            .setPositiveButton("Ok", null)
+                            .show();
+                }
 
-                ApiService apiService=ApiClient.getInstance().create(ApiService.class);
-                Call<ResponseBody>isAdmin=apiService.isAdmin(email);
-                isAdmin.enqueue(new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        String result= null;
-                        try {
-                            result = response.body().string();
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-                        isAdmin2=Boolean.parseBoolean(result.trim());
-                        if (isAdmin2){
-                            Intent intent = new Intent(MainActivity.this, AdminActivity.class);
-                            intent.putExtra("UserId",userId);
-                            startActivity(intent);
-                        }else {
-                            new AlertDialog.Builder(MainActivity.this)
-                                    .setTitle("SORRY")
-                                    .setMessage("You are not an admin")
-                                    .setPositiveButton("Ok", null)
-                                    .show();
-                        }
-                    }
 
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable throwable) {
-
-                    }
-                });
-
-            }
-            else {
-                Intent intent=new Intent(MainActivity.this, SettingsActivity.class);
-                intent.putExtra("userName",userName);
-                intent.putExtra("UserId",userId);
-                intent.putExtra("userEmail",email);
+            } else {
+                Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
+                intent.putExtra("userName", userName);
+                intent.putExtra("UserId", userId);
+                intent.putExtra("userEmail", email);
                 startActivity(intent);
             }
             return true;
@@ -121,19 +103,19 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
-                int itemId=item.getItemId();
+                int itemId = item.getItemId();
 
-                if (itemId==R.id.list){
-                    loadFragment(new AllListFragment(),false);
+                if (itemId == R.id.list) {
+                    loadFragment(new AllListFragment(), false);
                     toolbar.setVisibility(VISIBLE);
-                } else if (itemId==R.id.item) {
-                    loadFragment(new ItemFragment(),false);
+                } else if (itemId == R.id.item) {
+                    loadFragment(new ItemFragment(), false);
                     toolbar.setVisibility(GONE);
-                } else if (itemId==R.id.addItem) {
-                    loadFragment(new AddItemFragment(),false);
+                } else if (itemId == R.id.addItem) {
+                    loadFragment(new AddItemFragment(), false);
                     toolbar.setVisibility(GONE);
-                }else {
-                    loadFragment(new ProfileFragment(),false);
+                } else {
+                    loadFragment(new ProfileFragment(), false);
                     toolbar.setVisibility(GONE);
                 }
 
@@ -141,6 +123,29 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    public void isAdmin() {
+        ApiService apiService = ApiClient.getInstance().create(ApiService.class);
+        Call<ResponseBody> isAdmin = apiService.isAdmin(email);
+        isAdmin.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                String result = null;
+                try {
+                    result = response.body().string();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                isAdmin2 = Boolean.parseBoolean(result.trim());
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+
+            }
+        });
     }
 
     @Override
@@ -156,20 +161,59 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void loadFragment(Fragment fragment,boolean isList){
-        FragmentManager manager=getSupportFragmentManager();
-        FragmentTransaction transaction=manager.beginTransaction();
-        Bundle bundle=new Bundle();
-        bundle.putString("email",email);
-        bundle.putLong("UserId",userId);
-        bundle.putString("UserName",userName);
+    public void loadFragment(Fragment fragment, boolean isList) {
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        Bundle bundle = new Bundle();
+        bundle.putString("email", email);
+        bundle.putLong("UserId", userId);
+        bundle.putString("UserName", userName);
+        bundle.putBoolean("isAdmin", isAdmin2);
         fragment.setArguments(bundle);
-        if (isList){
-
-            transaction.add(R.id.nav_host_fragment,fragment);
-        }else {
+        if (isList) {
+            transaction.add(R.id.nav_host_fragment, fragment);
+        } else {
             transaction.replace(R.id.nav_host_fragment, fragment);
         }
         transaction.commit();
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        refreshUI();
+    }
+
+    private void refreshUI() {
+        TextView creditText = findViewById(R.id.cradit_coin);
+        getUserCredit(creditText);
+    }
+
+    private void getUserCredit(TextView creditText) {
+        ApiService apiService = ApiClient.getInstance().create(ApiService.class);
+        Call<ResponseBody> getCoin = apiService.getCoin(email);
+
+        getCoin.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    try {
+                        String coinStr = response.body().string().trim();
+                        int coin = Integer.parseInt(coinStr);
+                        credit = coin;
+                        creditText.setText(String.valueOf(credit));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
+    }
+
+
 }

@@ -3,4 +3,7 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="button">#F26A6A</color>
+    <color name="checkbox_color">#A0522D</color> <!-- Brownish -->
+    <color name="link_color">#1565C0</color> <!-- Blue link style -->
+
 </resources>

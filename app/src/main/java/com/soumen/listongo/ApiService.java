@@ -6,6 +6,7 @@ import com.soumen.listongo.Fragment.AllListF.AllListFragmentModel;
 import com.soumen.listongo.Fragment.ItemLi.ProductListModel;
 
 import java.util.List;
+import java.util.Map;
 
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -120,8 +121,27 @@ public interface ApiService {
                               @Query("description") String description,
                               @Query("id") Long id,
                               @Query("nickName") String nickName);
+
     @DELETE("product/delete")
     Call<ResponseBody> deleteProduct(
             @Query("proId") Long proId
     );
+
+    @GET("user/send-link")
+    Call<ResponseBody> sendLink(@Query("email") String email);
+
+    @GET("user/admin-email")
+    Call<ResponseBody> congEmail(@Query("email") String email);
+
+    @PUT("user/request-admin")
+    Call<ResponseBody> reqForAdmin(@Body Map<String, String> payload);
+
+    @GET("user/get-credit")
+    Call<ResponseBody> getCoin(@Query("email") String email);
+
+    @PUT("user/buy-credit")
+    Call<ResponseBody> buyCredit(@Query("email") String email, @Query("credit") Integer credit);
+
+    @POST("user/cost-credit")
+    Call<ResponseBody> costCredit(@Query("email") String email, @Query("cost") int cost);
 }

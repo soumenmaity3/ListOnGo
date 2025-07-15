@@ -88,10 +88,20 @@
 
             <!-- Buttons -->
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_support"
+                android:id="@+id/btn_buy_credit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
+                android:backgroundTint="@color/button"
+                app:cornerRadius="10dp"
+                android:textColor="@color/white"
+                android:text="Buy Credit"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_support"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
                 android:backgroundTint="@color/button"
                 app:cornerRadius="10dp"
                 android:textColor="@color/white"

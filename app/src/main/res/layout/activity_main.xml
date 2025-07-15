@@ -13,11 +13,10 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="#E29595"
-        android:visibility="visible"
-        app:menu="@menu/tool_bar_menu"
-        android:elevation="4dp">
+        android:elevation="4dp"
+        app:menu="@menu/tool_bar_menu">
 
-        <!-- Text inside the Toolbar -->
+        <!-- Container for username and credit -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
@@ -26,22 +25,39 @@
             android:paddingStart="16dp">
 
             <TextView
-                android:id="@+id/welcome_text"
+                android:id="@+id/username_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Welcome: "
+                android:text="User"
                 android:textStyle="bold"
                 android:textColor="#0E0A0A"
                 android:textSize="20sp" />
 
             <TextView
-                android:id="@+id/username_text"
+                android:id="@+id/cradit_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text=" User"
-                android:textStyle="bold"
+                android:text="Credit:"
+                android:layout_marginStart="30dp"
                 android:textColor="#0E0A0A"
-                android:textSize="20sp" />
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/cradit_coin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:layout_marginStart="5dp"
+                android:textColor="#0E0A0A"
+                android:textSize="18sp" />
+
+            <ImageView
+                android:id="@+id/credit_icon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/credit_coin"
+                android:scaleType="centerCrop"
+                android:contentDescription="Coin Icon" />
         </LinearLayout>
     </com.google.android.material.appbar.MaterialToolbar>
 

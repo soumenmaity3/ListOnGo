@@ -101,4 +101,21 @@
         app:icon="@drawable/logout"
         app:iconGravity="textStart"
         app:iconPadding="8dp" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_req_for_admin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/profile_card"
+        android:layout_marginTop="92dp"
+        android:backgroundTint="@color/button"
+        android:text="Request For Make Admin"
+        android:textAllCaps="false"
+        android:visibility="visible"
+        android:textColor="@android:color/white"
+        app:cornerRadius="8dp"
+        app:icon="@drawable/administration"
+        app:iconGravity="textStart"
+        app:iconPadding="8dp" />
+
 </RelativeLayout>

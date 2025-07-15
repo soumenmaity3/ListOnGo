@@ -23,6 +23,9 @@ import com.google.android.material.textview.MaterialTextView;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.soumen.listongo.ApiClient;
 import com.soumen.listongo.ApiService;
+import com.soumen.listongo.ForAdmin.ReqForMakeAdmin.PayForAdminActivity;
+import com.soumen.listongo.ForAdmin.ReqForMakeAdmin.PlaneListActivity;
+import com.soumen.listongo.ForAdmin.ReqForMakeAdmin.ReqForAdminActivity;
 import com.soumen.listongo.MainActivity;
 import com.soumen.listongo.OptionActivity;
 import com.soumen.listongo.R;
@@ -30,6 +33,7 @@ import com.soumen.listongo.SignUpActivity;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -47,9 +51,15 @@ import retrofit2.Response;
 
 
 public class SettingsActivity extends AppCompatActivity {
-    private static final int REQUEST_CODE=1000;
-    MaterialButton btnContact,btnPrivacy,btnAbout,btnFeedback,btnDelete,btnLogout,btnClear;
-    @SuppressLint({"MissingInflatedId","WrongViewCast"})
+    private static final int REQUEST_CODE = 1000;
+    private static final int PLAN_REQUEST_CODE =1001 ;
+    MaterialButton btnContact, btnPrivacy, btnAbout, btnFeedback, btnDelete, btnLogout, btnClear, btnBuyCredit;
+    String email,coinValue,selectedPlan;
+    private TextInputEditText dChoosePlan;
+    private Dialog creditDialog;
+
+
+    @SuppressLint({"MissingInflatedId", "WrongViewCast"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         SettingsUtil.applyTheme(this);
@@ -67,20 +77,48 @@ public class SettingsActivity extends AppCompatActivity {
         MaterialToolbar toolbar = findViewById(R.id.toolbar);
         MaterialTextView text_version = findViewById(R.id.text_version);
 
+        email = getIntent().getStringExtra("userEmail");
+        btnAbout = findViewById(R.id.btn_about);
+        btnContact = findViewById(R.id.btn_support);
+        btnPrivacy = findViewById(R.id.btn_privacy);
+        btnFeedback = findViewById(R.id.btn_feedback);
+        btnBuyCredit = findViewById(R.id.btn_buy_credit);
 
-        btnAbout=findViewById(R.id.btn_about);
-        btnContact=findViewById(R.id.btn_support);
-        btnPrivacy=findViewById(R.id.btn_privacy);
-        btnFeedback=findViewById(R.id.btn_feedback);
+        btnContact.setOnClickListener(v -> startActivity(new Intent(this, ContactSupportActivity.class)));
+        btnPrivacy.setOnClickListener(v -> startActivity(new Intent(this, PrivacyPolicyActivity.class)));
+        btnFeedback.setOnClickListener(v -> startActivity(new Intent(this, FeedbackActivity.class)));
+        btnAbout.setOnClickListener(v -> startActivity(new Intent(this, AboutActivity.class)));
 
-        btnContact.setOnClickListener(v->startActivity(new Intent(this, ContactSupportActivity.class)));
-        btnPrivacy.setOnClickListener(v->startActivity(new Intent(this, PrivacyPolicyActivity.class)));
-        btnFeedback.setOnClickListener(v->startActivity(new Intent(this, FeedbackActivity.class)));
-        btnAbout.setOnClickListener(v->startActivity(new Intent(this, AboutActivity.class)));
+        btnDelete = findViewById(R.id.btn_delete_account);
+        btnLogout = findViewById(R.id.btn_logout);
+        btnClear = findViewById(R.id.btn_clear_list);
 
-        btnDelete=findViewById(R.id.btn_delete_account);
-        btnLogout=findViewById(R.id.btn_logout);
-        btnClear=findViewById(R.id.btn_clear_list);
+        btnBuyCredit.setOnClickListener(v -> {
+            creditDialog = new Dialog(this);
+            creditDialog.setContentView(R.layout.buy_credit_dialog);
+
+            TextInputEditText dEditEmail = creditDialog.findViewById(R.id.emailInput);
+            dChoosePlan = creditDialog.findViewById(R.id.creditInput);
+            MaterialButton dCreditChoose = creditDialog.findViewById(R.id.choosePlanButton);
+            MaterialButton dPay = creditDialog.findViewById(R.id.submitButton);
+
+            dEditEmail.setText(email); // optional: set from your stored email
+
+            dCreditChoose.setOnClickListener(vi -> {
+                Intent intent = new Intent(SettingsActivity.this, PlaneListActivity.class);
+                startActivityForResult(intent, PLAN_REQUEST_CODE);
+            });
+            dPay.setOnClickListener(vi->{
+                Intent intent=new Intent(SettingsActivity.this, PayForAdminActivity.class);
+                intent.putExtra("email",email);
+                intent.putExtra("coin_value",coinValue.trim());
+                startActivity(intent);
+                creditDialog.dismiss();
+            });
+
+            creditDialog.show();
+        });
+
 
 
         PackageInfo packageInfo = null;
@@ -94,7 +132,7 @@ public class SettingsActivity extends AppCompatActivity {
             versionCode = packageInfo.getLongVersionCode();
         }
 
-        text_version.setText("App Version: "+ packageInfo.versionName+"." + versionCode);
+        text_version.setText("App Version: " + packageInfo.versionName + "." + versionCode);
 
         Intent intent2 = getIntent();
         String name = intent2.getStringExtra("userName");
@@ -189,7 +227,6 @@ public class SettingsActivity extends AppCompatActivity {
         });
 
 
-
         MaterialSwitch notification = findViewById(R.id.switch_notifications);
         SharedPreferences prefs3 = getSharedPreferences("app_settings", MODE_PRIVATE);
 
@@ -223,7 +260,7 @@ public class SettingsActivity extends AppCompatActivity {
         });
 
 
-        btnLogout.setOnClickListener(v->startActivity(new Intent(SettingsActivity.this, OptionActivity.class)));
+        btnLogout.setOnClickListener(v -> startActivity(new Intent(SettingsActivity.this, OptionActivity.class)));
 
         btnDelete.setOnClickListener(v -> {
             Dialog dialog = new Dialog(this);
@@ -264,7 +301,7 @@ public class SettingsActivity extends AppCompatActivity {
         });
 
 
-        btnClear.setOnClickListener(v->{
+        btnClear.setOnClickListener(v -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Alert")
                     .setMessage("If you click 'OK', you will lose your entire list. This action cannot be undone.")
@@ -334,9 +371,9 @@ public class SettingsActivity extends AppCompatActivity {
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);
                     finish();
-                } else if(response.code()==500){
+                } else if (response.code() == 500) {
                     // Handle error response
-                    Toast.makeText(SettingsActivity.this, "First Clear you list. " , Toast.LENGTH_LONG).show();
+                    Toast.makeText(SettingsActivity.this, "First Clear you list. ", Toast.LENGTH_LONG).show();
                 }
             }
 
@@ -366,6 +403,19 @@ public class SettingsActivity extends AppCompatActivity {
                 Toast.makeText(SettingsActivity.this, "🚫 Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PLAN_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
+            selectedPlan = data.getStringExtra("selected_plan");
+            coinValue = data.getStringExtra("coin_value");
+
+            // Update the dialog's credit input if dialog is still open
+            if (creditDialog != null && creditDialog.isShowing() && dChoosePlan != null) {
+                dChoosePlan.setText(selectedPlan + " for " + coinValue+" coins");
+            }
+        }
     }
 
 }
