@@ -135,7 +135,7 @@ public class ReqForAdminActivity extends AppCompatActivity {
                     sendOTP.setText("Send OTP");
                     sendOTP.setEnabled(true);
                 }
-            };
+            }.start();
         });
         btnAdmin.setOnClickListener(v -> {
             if (!checkBox.isChecked()) {

@@ -4,5 +4,8 @@
     android:title="Is Admin?"/>
     <item android:id="@+id/setting"
         android:title="Settings"/>
+    <item android:id="@+id/assist"
+        android:title="Set Reminder"/>
+
 
 </menu>

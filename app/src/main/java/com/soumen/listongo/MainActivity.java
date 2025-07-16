@@ -19,6 +19,8 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
 
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -31,11 +33,15 @@ import com.soumen.listongo.SettingActivity.SettingsActivity;
 import com.soumen.listongo.SettingActivity.SettingsUtil;
 
 import java.io.IOException;
+import java.util.Calendar;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import com.google.android.material.timepicker.MaterialTimePicker;
+import com.google.android.material.timepicker.TimeFormat;
 
 public class MainActivity extends AppCompatActivity {
     TextView textUser;
@@ -90,12 +96,14 @@ public class MainActivity extends AppCompatActivity {
                 }
 
 
-            } else {
+            } else if (v.getItemId()==R.id.setting){
                 Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
                 intent.putExtra("userName", userName);
                 intent.putExtra("UserId", userId);
                 intent.putExtra("userEmail", email);
                 startActivity(intent);
+            }else {
+                showTimePickerDialog();
             }
             return true;
         });
@@ -213,6 +221,50 @@ public class MainActivity extends AppCompatActivity {
                 t.printStackTrace();
             }
         });
+    }
+
+
+    private void showTimePickerDialog() {
+        MaterialTimePicker picker = new MaterialTimePicker.Builder()
+                .setTimeFormat(TimeFormat.CLOCK_12H) // or CLOCK_24H
+                .setHour(12)
+                .setMinute(0)
+                .setTitleText("Select Reminder Time")
+                .build();
+
+        picker.show(getSupportFragmentManager(), "MATERIAL_TIME_PICKER");
+
+        picker.addOnPositiveButtonClickListener(view -> {
+            int hour = picker.getHour();
+            int minute = picker.getMinute();
+
+            // Call your scheduling function here
+            scheduleReminder(hour, minute);
+        });
+    }
+
+    @SuppressLint("ScheduleExactAlarm")
+    private void scheduleReminder(int hour, int minute) {
+        Calendar now = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, hour);
+        calendar.set(Calendar.MINUTE, minute);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+
+        if (calendar.getTimeInMillis() <= now.getTimeInMillis()) {
+            calendar.add(Calendar.DAY_OF_MONTH, 1);
+        }
+
+        long delay = calendar.getTimeInMillis() - now.getTimeInMillis();
+
+        OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(ReminderWorker.class)
+                .setInitialDelay(delay, TimeUnit.MILLISECONDS)
+                .build();
+
+        WorkManager.getInstance(this).enqueue(workRequest);
+
+        Toast.makeText(this, "Reminder set via WorkManager", Toast.LENGTH_SHORT).show();
     }
 
 
