@@ -108,10 +108,15 @@ public class SettingsActivity extends AppCompatActivity {
                 Intent intent = new Intent(SettingsActivity.this, PlaneListActivity.class);
                 startActivityForResult(intent, PLAN_REQUEST_CODE);
             });
+
+             boolean isAdminReq=false;
+
             dPay.setOnClickListener(vi->{
                 Intent intent=new Intent(SettingsActivity.this, PayForAdminActivity.class);
                 intent.putExtra("email",email);
+                intent.putExtra("email",email);
                 intent.putExtra("coin_value",coinValue.trim());
+                intent.putExtra("isAdminReq",isAdminReq);
                 startActivity(intent);
                 creditDialog.dismiss();
             });

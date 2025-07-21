@@ -115,6 +115,7 @@ public class MainActivity extends AppCompatActivity {
 
                 if (itemId == R.id.list) {
                     loadFragment(new AllListFragment(), false);
+                    refreshUI();
                     toolbar.setVisibility(VISIBLE);
                 } else if (itemId == R.id.item) {
                     loadFragment(new ItemFragment(), false);
@@ -177,6 +178,7 @@ public class MainActivity extends AppCompatActivity {
         bundle.putLong("UserId", userId);
         bundle.putString("UserName", userName);
         bundle.putBoolean("isAdmin", isAdmin2);
+        bundle.putInt("credit",credit);
         fragment.setArguments(bundle);
         if (isList) {
             transaction.add(R.id.nav_host_fragment, fragment);

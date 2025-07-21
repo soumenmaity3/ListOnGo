@@ -1,8 +1,9 @@
 package com.soumen.listongo.ForAdmin.ReqForMakeAdmin;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Toast;
+import android.widget.*;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AlertDialog;
@@ -28,6 +29,9 @@ import retrofit2.Response;
 public class PayForAdminActivity extends AppCompatActivity {
     String email, reason, coinValue;
     MaterialCardView upiOption,cardOption,netBankingOption;
+    TextView tvPrice;
+    Dialog dialog;
+    boolean isAdminReq;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,10 +46,12 @@ public class PayForAdminActivity extends AppCompatActivity {
         email = getIntent().getStringExtra("email");
         reason = getIntent().getStringExtra("reason");
         coinValue = getIntent().getStringExtra("coin_value");
+        isAdminReq=getIntent().getBooleanExtra("isAdminReq",false);
 
         upiOption=findViewById(R.id.upiOption);
         cardOption=findViewById(R.id.cardOption);
         netBankingOption=findViewById(R.id.netBankingOption);
+        tvPrice=findViewById(R.id.tvPrice);
 
         findViewById(R.id.otherOption).setOnClickListener(v -> {
             String[] options = {
@@ -59,6 +65,10 @@ public class PayForAdminActivity extends AppCompatActivity {
                     "Cash / Manual Transfer"
             };
 
+            if (coinValue != null) {
+                tvPrice.setText(coinValue);
+            }
+
             new AlertDialog.Builder(this)
                     .setTitle("Other Payment Options")
                     .setItems(options, (dialog, which) -> {
@@ -69,6 +79,9 @@ public class PayForAdminActivity extends AppCompatActivity {
                     .show();
         });
 
+        dialog=new Dialog(this);
+        dialog.setContentView(R.layout.dialog_processing_payment);
+
         upiOption.setOnClickListener(v->buyCoin());
         netBankingOption.setOnClickListener(v->buyCoin());
         cardOption.setOnClickListener(v->buyCoin());
@@ -78,24 +91,34 @@ public class PayForAdminActivity extends AppCompatActivity {
 
 
     public void buyCoin() {
-        ApiService apiService=ApiClient.getInstance().create(ApiService.class);
-        Call<ResponseBody>buy=apiService.buyCredit(email,Integer.parseInt(coinValue));
+        dialog.show();
+
+        ApiService apiService = ApiClient.getInstance().create(ApiService.class);
+        Call<ResponseBody> buy = apiService.buyCredit(email, Integer.parseInt(coinValue));
+
         buy.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                dialog.dismiss();
                 if (response.isSuccessful()) {
-                    reqForAdmin(email,reason);
-                }else {
-                    Toast.makeText(PayForAdminActivity.this, "Payment Unsuccessful.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(PayForAdminActivity.this, "Payment Successful!", Toast.LENGTH_SHORT).show();
+                    if (isAdminReq) {
+                        reqForAdmin(email,reason);
+                    }
+                    finish();
+                } else {
+                    Toast.makeText(PayForAdminActivity.this, "Payment failed. Please try again.", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable throwable) {
-
+                dialog.dismiss();
+                Toast.makeText(PayForAdminActivity.this, "Error: " + throwable.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
     }
+
 
     public void reqForAdmin(String email, String reason) {
         Map<String, String> body = new HashMap<>();
@@ -108,7 +131,7 @@ public class PayForAdminActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     congEmail();
                     Toast.makeText(PayForAdminActivity.this, "User promoted to admin", Toast.LENGTH_SHORT).show();
-                    finish();
+
                 } else {
                     Toast.makeText(PayForAdminActivity.this, "Promotion failed: user not found or already admin", Toast.LENGTH_SHORT).show();
                 }

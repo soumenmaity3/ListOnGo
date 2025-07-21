@@ -44,7 +44,7 @@ public class ItemFragment extends Fragment {
     private ItemListAdapter adapter;
     private List<ProductListModel> productList = new ArrayList<>();
     List<SidebarItem> menuItems;
-    String api_url;
+    String api_url,email;
     TextInputEditText searchLayout;
     MaterialToolbar cart_tool;
     ProgressBar itemProgress;
@@ -71,9 +71,13 @@ public class ItemFragment extends Fragment {
         RecyclerView sidebar = view.findViewById(R.id.sidebarRecyclerView);
         sidebar.setLayoutManager(new LinearLayoutManager(getContext()));
         cart_tool = view.findViewById(R.id.cart_tool);
+        email=getArguments().getString("email");
+        int credit=getArguments().getInt("credit");
 
         arrowAnim.setOnClickListener(v -> {
             Intent intent = new Intent(getContext(), CartActivity.class);
+            intent.putExtra("email",email);
+            intent.putExtra("credit",credit);
             intent.putExtra("userId",userId);
             startActivity(intent);
         });

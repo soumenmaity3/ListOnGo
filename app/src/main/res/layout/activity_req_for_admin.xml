@@ -118,15 +118,15 @@
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <!-- Choose Plan Button -->
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/choosePlanButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="Choose Plan"
-                    android:backgroundTint="@color/button"
-                    android:textColor="@color/white"
-                    app:cornerRadius="8dp" />
+<!--                <com.google.android.material.button.MaterialButton-->
+<!--                    android:id="@+id/choosePlanButton"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginTop="8dp"-->
+<!--                    android:text="Choose Plan"-->
+<!--                    android:backgroundTint="@color/button"-->
+<!--                    android:textColor="@color/white"-->
+<!--                    app:cornerRadius="8dp" />-->
 
                 <!-- Agreement Checkbox -->
                 <LinearLayout

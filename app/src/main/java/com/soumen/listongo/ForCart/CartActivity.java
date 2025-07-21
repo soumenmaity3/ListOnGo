@@ -6,6 +6,7 @@ import android.widget.*;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -37,6 +38,7 @@ public class CartActivity extends AppCompatActivity {
     private CartItemAdapter adapter;
     private List<CartModel> cartItems = new ArrayList<>();
     TextView totalPriceText;
+    String email;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -53,6 +55,7 @@ public class CartActivity extends AppCompatActivity {
         });
         String image_url=getString(R.string.server_api);
         Long id= getIntent().getLongExtra("userId",0);
+        email=getIntent().getStringExtra("email");
 
         MaterialToolbar toolbar = findViewById(R.id.cartToolbar);
         MaterialButton btnAddList=findViewById(R.id.button_cart);
@@ -64,54 +67,64 @@ public class CartActivity extends AppCompatActivity {
         cartList.setLayoutManager(new LinearLayoutManager(this));
         cartList.setAdapter(adapter);
 
+        int credit=getIntent().getIntExtra("credit",0);
+
         btnAddList.setOnClickListener(v -> {
+            if (credit>=15) {
+                List<ForAllListModel> allListModels = new ArrayList<>();
+                TextInputEditText edtListName = findViewById(R.id.edtListName);
+                String listName = edtListName.getText().toString();
 
-            List<ForAllListModel> allListModels=new ArrayList<>();
-            TextInputEditText edtListName=findViewById(R.id.edtListName);
-            String listName=edtListName.getText().toString();
 
+                for (CartModel item : cartItems) {
+                    ForAllListModel model = new ForAllListModel();
+                    model.setTitle(item.getTitle());
+                    model.setPrice(item.getPrice());
+                    model.setQuantity(item.getQuantity());
+                    model.setList_name(listName);
+                    allListModels.add(model);
+                }
+                if (allListModels.isEmpty()) {
+                    Toast.makeText(this, "Add Some product", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
-            for (CartModel  item: cartItems) {
-                ForAllListModel model=new ForAllListModel();
-                model.setTitle(item.getTitle());
-                model.setPrice(item.getPrice());
-                model.setQuantity(item.getQuantity());
-                model.setList_name(listName);
-                allListModels.add(model);
-            }
-            if (allListModels.isEmpty()) {
-                Toast.makeText(this, "Add Some product", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            ApiService apiService= ApiClient.getInstance().create(ApiService.class);
-            Call<ResponseBody> createList=apiService.addList(allListModels,id);
-            createList.enqueue(new Callback<ResponseBody>() {
-                @Override
-                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                    if (response.isSuccessful()) {
-                        Toast.makeText(CartActivity.this, "List uploaded successfully", Toast.LENGTH_SHORT).show();
-                        AppDatabase db = AppDatabaseClient.getInstance(CartActivity.this);
-                        btnAddList.setEnabled(false);
-                        new Thread(() -> {
-                            db.cartDao().delete();
-                            runOnUiThread(() -> {
-                                cartItems.clear();
-                                edtListName.setText("");
-                                adapter.notifyDataSetChanged();
-                                totalPriceText.setText("₹0.00");
-                            });
-                        }).start();
-                    }else {
-                        Toast.makeText(CartActivity.this, "Upload failed: " + response.code(), Toast.LENGTH_LONG).show();
+                ApiService apiService = ApiClient.getInstance().create(ApiService.class);
+                Call<ResponseBody> createList = apiService.addList(allListModels, id);
+                createList.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        if (response.isSuccessful()) {
+                            Toast.makeText(CartActivity.this, "List uploaded successfully", Toast.LENGTH_SHORT).show();
+                            AppDatabase db = AppDatabaseClient.getInstance(CartActivity.this);
+                            btnAddList.setEnabled(false);
+                            new Thread(() -> {
+                                db.cartDao().delete();
+                                runOnUiThread(() -> {
+                                    cartItems.clear();
+                                    edtListName.setText("");
+                                    adapter.notifyDataSetChanged();
+                                    totalPriceText.setText("₹0.00");
+                                });
+                            }).start();
+                            cost();
+                        } else {
+                            Toast.makeText(CartActivity.this, "Upload failed: " + response.code(), Toast.LENGTH_LONG).show();
+                        }
                     }
-                }
 
-                @Override
-                public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable throwable) {
 
-                }
-            });
+                    }
+                });
+            }else {
+                AlertDialog.Builder builder=new AlertDialog.Builder(this);
+                builder.setTitle("Insufficient Credits")
+                        .setMessage("You don’t have enough credit points to perform this action.\nPlease buy credits to continue.")
+                        .setPositiveButton("OK", null)
+                        .show();
+            }
 
 
         });
@@ -134,5 +147,20 @@ public class CartActivity extends AppCompatActivity {
         });
     }
 
+    public void cost(){
+        ApiService apiService = ApiClient.getInstance().create(ApiService.class);
+        Call<ResponseBody> costCredit=apiService.costCredit(email,15);
+        costCredit.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+
+            }
+        });
+    }
 
 }

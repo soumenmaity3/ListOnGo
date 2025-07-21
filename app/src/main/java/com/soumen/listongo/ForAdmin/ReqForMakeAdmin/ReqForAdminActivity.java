@@ -43,7 +43,7 @@ import retrofit2.Response;
 public class ReqForAdminActivity extends AppCompatActivity {
     private static final int PLAN_REQUEST_CODE = 1001;
     TextInputEditText planEditText;
-    private String storeOTP, coinValue;
+    private String storeOTP, coinValue="10";
 
     //     choosePlane;
     @SuppressLint("MissingInflatedId")
@@ -102,7 +102,7 @@ public class ReqForAdminActivity extends AppCompatActivity {
         String email = getIntent().getStringExtra("email");
 
         MaterialButton btnAdmin = findViewById(R.id.submitButton);
-        MaterialButton choosePlane = findViewById(R.id.choosePlanButton);
+//        MaterialButton choosePlane = findViewById(R.id.choosePlanButton);
         MaterialCheckBox checkBox = findViewById(R.id.termsCheckbox);
         MaterialTextView sendOTP = findViewById(R.id.sendOtpText);
         TextInputEditText reasonEdit = findViewById(R.id.reasonEditText);
@@ -110,14 +110,15 @@ public class ReqForAdminActivity extends AppCompatActivity {
         TextInputEditText otpInput = findViewById(R.id.otpEditText);
         planEditText = findViewById(R.id.planEditText);
 
+        planEditText.setText("Pay ₹10 For One Month");
 
         emailInput.setText(email);
         emailInput.setEnabled(false);
 
-        choosePlane.setOnClickListener(v -> {
-            Intent intent = new Intent(ReqForAdminActivity.this, PlaneListActivity.class);
-            startActivityForResult(intent, PLAN_REQUEST_CODE);
-        });
+//        choosePlane.setOnClickListener(v -> {
+//            Intent intent = new Intent(ReqForAdminActivity.this, PlaneListActivity.class);
+//            startActivityForResult(intent, PLAN_REQUEST_CODE);
+//        });
 
 
         sendOTP.setOnClickListener(v -> {
@@ -192,10 +193,12 @@ public class ReqForAdminActivity extends AppCompatActivity {
                             useThis.enqueue(new Callback<ResponseBody>() {
                                 @Override
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                    boolean isAdminReq=true;
                                     Intent intent=new Intent(ReqForAdminActivity.this, PayForAdminActivity.class);
                                     intent.putExtra("email",email);
                                     intent.putExtra("reason",reason);
                                     intent.putExtra("coin_value",coinValue.trim());
+                                    intent.putExtra("isAdminReq",isAdminReq);
                                     startActivity(intent);
                                     finish();
                                 }
@@ -226,13 +229,13 @@ public class ReqForAdminActivity extends AppCompatActivity {
     }
 
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PLAN_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
-            String selectedPlan = data.getStringExtra("selected_plan");
-            coinValue = data.getStringExtra("coin_value");
-            planEditText.setText(selectedPlan + " for " + coinValue + " coin");
-        }
-    }
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        if (requestCode == PLAN_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
+//            String selectedPlan = data.getStringExtra("selected_plan");
+//            coinValue = data.getStringExtra("coin_value");
+//            planEditText.setText(selectedPlan + " for " + coinValue + " coin");
+//        }
+//    }
 }

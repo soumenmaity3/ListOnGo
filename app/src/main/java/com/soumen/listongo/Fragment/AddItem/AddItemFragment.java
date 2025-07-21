@@ -6,12 +6,15 @@ import static android.view.View.VISIBLE;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
@@ -27,6 +30,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
@@ -42,6 +46,7 @@ import com.soumen.listongo.R;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Random;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -56,7 +61,7 @@ public class AddItemFragment extends Fragment {
     public AddItemFragment() {
     }
 
-    TextInputEditText edtTitle, edtDescription, edtPrice,nickNameEditText;
+    TextInputEditText edtTitle, edtDescription, edtPrice, nickNameEditText;
     MaterialAutoCompleteTextView dropCategory;
     ImageView productImageView;
     MaterialButton uploadButton, submitButton;
@@ -64,7 +69,7 @@ public class AddItemFragment extends Fragment {
     ProgressBar addProgress;
     private final int gallary_code = 1000;
     private Uri imageUri;
-    String item;
+    String item,email;
     Long userId;
 
     @SuppressLint("MissingInflatedId")
@@ -78,34 +83,46 @@ public class AddItemFragment extends Fragment {
         dropCategory = view.findViewById(R.id.categoryDropdown);
         productImageView = view.findViewById(R.id.productImageView);
         uploadButton = view.findViewById(R.id.uploadButton);
-        dropdown_menu=view.findViewById(R.id.dropdown_menu);
+        dropdown_menu = view.findViewById(R.id.dropdown_menu);
         submitButton = view.findViewById(R.id.submitButton);
-        addProgress=view.findViewById(R.id.addProgress);
-        nickNameEditText=view.findViewById(R.id.nickNameEditText);
+        addProgress = view.findViewById(R.id.addProgress);
+        nickNameEditText = view.findViewById(R.id.nickNameEditText);
 
-        userId=getArguments().getLong("UserId");
+        userId = getArguments().getLong("UserId");
+        int credit = getArguments().getInt("credit");
+        email=getArguments().getString("email");
 
         uploadButton.setOnClickListener(v -> {
             Intent image = new Intent(Intent.ACTION_PICK);
             image.setData(MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             startActivityForResult(image, gallary_code);
+
         });
 
         submitButton.setOnClickListener(v -> {
-            if (edtTitle.getText().toString() == null || edtTitle.getText().toString().isEmpty() ||
-                    edtDescription.getText().toString() == null || edtDescription.getText().toString().isEmpty() ||
-                    edtPrice.getText().toString() == null || edtPrice.getText().toString().isEmpty() ||
-                    dropCategory.getText().toString() == null || dropCategory.getText().toString().isEmpty() ||
-                    productImageView == null) {
-                Toast.makeText(getContext(), "Something is missing", Toast.LENGTH_SHORT).show();
-                return;
-            }
+            if (credit > 25) {
+                if (edtTitle.getText().toString() == null || edtTitle.getText().toString().isEmpty() ||
+                        edtDescription.getText().toString() == null || edtDescription.getText().toString().isEmpty() ||
+                        edtPrice.getText().toString() == null || edtPrice.getText().toString().isEmpty() ||
+                        dropCategory.getText().toString() == null || dropCategory.getText().toString().isEmpty() ||
+                        productImageView == null) {
+                    Toast.makeText(getContext(), "Something is missing", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
-            String title=edtTitle.getText().toString().trim().toLowerCase();
-            isPresent(title);
+                String title = edtTitle.getText().toString().trim().toLowerCase();
+                isPresent(title);
+            } else {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setTitle("Insufficient Credits")
+                        .setMessage("You don’t have enough credit points to perform this action.\nPlease buy credits to continue.")
+                        .setPositiveButton("OK", null)
+                        .show();
+
+            }
         });
 
-        String[] categories = {"Soft Drinks","Medicine", "Sweets & Chips","Fashion", "Fresh Vegetable","Non Veg","Spices","Husk Store", "Fresh Fruits", "Dry Fruits", "Flowers & Leaves", "Body Care", "Exotics", "Coriander & Others", "Dairy, Brade & Eggs", "Electronics", "Atta, Rice & Dal", "Bakery & Brade", "Puja Store"};
+        String[] categories = {"Soft Drinks", "Medicine", "Sweets & Chips", "Fashion", "Fresh Vegetable", "Non Veg", "Spices", "Husk Store", "Fresh Fruits", "Dry Fruits", "Flowers & Leaves", "Body Care", "Exotics", "Coriander & Others", "Dairy, Brade & Eggs", "Electronics", "Atta, Rice & Dal", "Bakery & Brade", "Puja Store"};
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), R.layout.drop_down_item, categories);
         dropCategory.setAdapter(adapter);
 
@@ -149,16 +166,17 @@ public class AddItemFragment extends Fragment {
         }
     }
 
-    private void isPresent(String title){
-        ApiService apiService=ApiClient.getInstance().create(ApiService.class);
-        Call<ResponseBody> isPresent= apiService.isPresent(title);
+    private void isPresent(String title) {
+        ApiService apiService = ApiClient.getInstance().create(ApiService.class);
+        Call<ResponseBody> isPresent = apiService.isPresent(title);
         isPresent.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 Log.d("AddResponse", String.valueOf(response.code()));
-                if (response.code()==200) {
+                if (response.code() == 200) {
                     addProduct();
-                }else {
+                    cost();
+                } else {
                     Toast.makeText(getContext(), "This product already exist", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -184,7 +202,7 @@ public class AddItemFragment extends Fragment {
             String title = edtTitle.getText().toString().trim();
             String description = edtDescription.getText().toString();
             double price = Double.parseDouble(edtPrice.getText().toString());
-            String nickName=nickNameEditText.getText().toString().trim();
+            String nickName = nickNameEditText.getText().toString().trim();
 
             // 2. Create product object
             AddProductModel product = new AddProductModel();
@@ -251,7 +269,8 @@ public class AddItemFragment extends Fragment {
                         } catch (IOException e) {
                             errorMsg = "Error reading error body: " + e.getMessage();
                         }
-                        Log.e("Upload", "Server Error: " + errorMsg);                    }
+                        Log.e("Upload", "Server Error: " + errorMsg);
+                    }
                 }
 
                 @Override
@@ -294,6 +313,52 @@ public class AddItemFragment extends Fragment {
         return result;
     }
 
+    public void cost(){
+        ApiService apiService=ApiClient.getInstance().create(ApiService.class);
+        Call<ResponseBody> costCredit=apiService.costCredit(email,25);
+        costCredit.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                String title = "Product Added";
+                String message = "Your product has been added successfully. 25 credits have been deducted from your wallet.\n" +
+                        "If the admin rejects the product, your credits will be refunded.\n" +
+                        "Review process typically takes up to 5 days.";
+                notification(getContext(),title,message);
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+
+            }
+        });
+    }
+
+    public void notification(Context context, String title, String message) {
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        String channelId = "default_channel_id";
+        String channelName = "Default Channel";
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(
+                    channelId,
+                    channelName,
+                    NotificationManager.IMPORTANCE_DEFAULT
+            );
+            channel.setDescription("Channel for basic notifications");
+            notificationManager.createNotificationChannel(channel);
+        }
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, channelId)
+                .setSmallIcon(R.drawable.liston)
+                .setContentTitle(title)
+                .setContentText(message)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setAutoCancel(true);
+
+        // Notification ID should be unique for each notification
+        int notificationId = new Random().nextInt(10000);
+        notificationManager.notify(notificationId, builder.build());
+    }
 
 
 }
