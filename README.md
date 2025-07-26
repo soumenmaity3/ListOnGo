@@ -1,57 +1,89 @@
 # ListOnGo
 
-**ListOnGo** is a smart reminder app designed to help you **never forget grocery or daily essential items** while shopping. Unlike traditional e-commerce platforms, ListOnGo focuses on personal convenience—it's your shopping memory companion.
+**ListOnGo** is a smart reminder app designed to help you **never forget grocery or essential items** while shopping. Unlike traditional e-commerce platforms, this app acts as a personal assistant and reminder system for your real-life shopping needs.
 
 ---
 
 ## 📝 Description
 
-Imagine you go shopping and forget an essential item—**ListOnGo** prevents that. This app works like a grocery assistant and reminder tool that keeps track of what you need to buy.
+Imagine you're at a shop and forget to buy an item you really need—**ListOnGo** helps prevent that. It allows you to prepare, store, and manage shopping lists and reminds you of them just when you need it.
 
 ---
 
 ## 🔐 Authentication
 
-- Sign Up / Sign In using **email and password**
-- **Email verification** via OTP is required
+- Sign up / Sign in with **email & password**
+- Includes **OTP-based email verification**
 
 ---
 
 ## 🚀 Features
 
-### 📌 Toolbar (Top Bar)
+### 📌 Top Toolbar
 - Displays:
   - **Username**
   - **Credit balance**
-  - A **three-dot menu** containing:
+  - Three-dot menu with:
     - `Is Admin?`
     - `Settings`
-    - `Reminder`
+    - `Set Reminder`
 
-### 🧾 Fragments / Pages
-
-#### 1. **Item Page**
-- Shows a **search bar**, **category filter**, and **cart option**
-- Displays a list of available items
-- Users can:
-  - Search items by name or category
-  - Select items to add to their cart
-
-#### 2. **Add Page**
-- Not all items may be listed by default
-- Users can **contribute new items**
-- Adding an item **costs 25 credits**
-- Submitted items appear on the **Item Page** after **admin approval**
-
-#### 3. **All List Page**
-- Shows all previously created shopping lists
+### 🔍 Item Page
 - Includes:
-  - **Creation time and date**
-  - **Bazar name**
-  - **Total cost** of the selected items
+  - **Search bar**
+  - **Category icons** on the side (e.g., Soft Drinks, Medicine, Fashion, etc.)
+  - **Cart Products section**
+- You can:
+  - Browse or search for items
+  - Add items to your cart
 
-#### 4. **Profile Page**
-- Displays **user information and details**
+### ➕ Add Page
+- Users can **submit a new product** if it doesn’t exist in the item list
+- Fields include:
+  - Title
+  - Nickname (optional)
+  - Description
+  - Price
+  - Category
+  - Upload Image
+- **Costs 25 credits** to submit
+- Requires **admin approval** to show in the main item list
+
+### 📃 All List Page
+- Displays previously created lists with:
+  - **Date & time**
+  - **Total cost**
+  - **Product details** like quantity, price, etc.
+
+### 👤 Profile Page
+- Shows:
+  - User ID
+  - Username
+  - Registered email
+- Includes a **Logout** button
+
+### ⚙️ Settings Page
+- Toggle settings like:
+  - Enable Notifications
+  - Biometric Login
+  - Auto Sync Data
+- Set App Theme
+- View username
+- Buttons:
+  - **Buy Credit**
+  - **Contact Support**
+  - **Privacy Policy**
+  - **About**
+  - **Feedback**
+  - **Clear Your List**
+
+### 🛠️ Admin Panel
+- Accessible from the toolbar menu (`Is Admin?`)
+- Features:
+  - `Pending List` – Items awaiting admin approval
+  - `Approve By You` – Items approved by the admin
+  - `Edit Product` – Manage submitted items
+- Admin note: *“Listing any product in the user list is entirely your responsibility”*
 
 ---
 
@@ -65,10 +97,8 @@ Imagine you go shopping and forget an essential item—**ListOnGo** prevents tha
 
 ## 📦 Installation
 
-To use the app:
-
-1. Visit the [official installation page](https://soumen-android.netlify.app/)
-2. Download the APK file and install it on your Android device
+1. Go to the official page: [https://soumen-android.netlify.app/](https://soumen-android.netlify.app/)
+2. Download and install the **APK file** on your Android phone.
 
 ---
 
