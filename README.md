@@ -1,26 +1,84 @@
-<h1 align="center">Hi 👋, I'm Soumen Maity</h1>
-<h3 align="center">A passionate Android and Java developer from India</h3>
+# ListOnGo
 
-<p align="left"> <a href="https://github.com/ryo-ma/github-profile-trophy"><img src="https://github-profile-trophy.vercel.app/?username=soumenmaity3" alt="soumenmaity3" /></a> </p>
+**ListOnGo** is a smart reminder app designed to help you **never forget grocery or daily essential items** while shopping. Unlike traditional e-commerce platforms, ListOnGo focuses on personal convenience—it's your shopping memory companion.
 
-- 🔭 I’m currently working on **ListOnGo**
+---
 
-- 🌱 I’m currently learning **Spring Boot, Android Development by Java, Flutter**
+## 📝 Description
 
-- 👨‍💻 All of my projects are available at [https://soumen-portfolio-java.netlify.app/](https://soumen-portfolio-java.netlify.app/)
+Imagine you go shopping and forget an essential item—**ListOnGo** prevents that. This app works like a grocery assistant and reminder tool that keeps track of what you need to buy.
 
-- 📫 How to reach me **sm8039912@gmail.com**
+---
 
-- 📄 Know about my experiences [https://www.linkedin.com/in/soumen-maity-6a311328a/](https://www.linkedin.com/in/soumen-maity-6a311328a/)
+## 🔐 Authentication
 
-<h3 align="left">Connect with me:</h3>
-<p align="left">
-<a href="https://twitter.com/soumenmaity_69" target="blank"><img align="center" src="https://raw.githubusercontent.com/rahuldkjain/github-profile-readme-generator/master/src/images/icons/Social/twitter.svg" alt="soumenmaity_69" height="30" width="40" /></a>
-<a href="https://linkedin.com/in/https://www.linkedin.com/in/soumen-maity-6a311328a/" target="blank"><img align="center" src="https://raw.githubusercontent.com/rahuldkjain/github-profile-readme-generator/master/src/images/icons/Social/linked-in-alt.svg" alt="https://www.linkedin.com/in/soumen-maity-6a311328a/" height="30" width="40" /></a>
-<a href="https://fb.com/https://www.facebook.com/share/16c8sbsr76/" target="blank"><img align="center" src="https://raw.githubusercontent.com/rahuldkjain/github-profile-readme-generator/master/src/images/icons/Social/facebook.svg" alt="https://www.facebook.com/share/16c8sbsr76/" height="30" width="40" /></a>
-</p>
+- Sign Up / Sign In using **email and password**
+- **Email verification** via OTP is required
 
-<h3 align="left">Languages and Tools:</h3>
-<p align="left"> <a href="https://developer.android.com" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/android/android-original-wordmark.svg" alt="android" width="40" height="40"/> </a> <a href="https://dart.dev" target="_blank" rel="noreferrer"> <img src="https://www.vectorlogo.zone/logos/dartlang/dartlang-icon.svg" alt="dart" width="40" height="40"/> </a> <a href="https://flutter.dev" target="_blank" rel="noreferrer"> <img src="https://www.vectorlogo.zone/logos/flutterio/flutterio-icon.svg" alt="flutter" width="40" height="40"/> </a> <a href="https://www.java.com" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/java/java-original.svg" alt="java" width="40" height="40"/> </a> <a href="https://www.mysql.com/" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/mysql/mysql-original-wordmark.svg" alt="mysql" width="40" height="40"/> </a> <a href="https://www.postgresql.org" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/postgresql/postgresql-original-wordmark.svg" alt="postgresql" width="40" height="40"/> </a> <a href="https://spring.io/" target="_blank" rel="noreferrer"> <img src="https://www.vectorlogo.zone/logos/springio/springio-icon.svg" alt="spring" width="40" height="40"/> </a> </p>
+---
 
-<p><img align="center" src="https://github-readme-stats.vercel.app/api/top-langs?username=soumenmaity3&show_icons=true&locale=en&layout=compact" alt="soumenmaity3" /></p>
+## 🚀 Features
+
+### 📌 Toolbar (Top Bar)
+- Displays:
+  - **Username**
+  - **Credit balance**
+  - A **three-dot menu** containing:
+    - `Is Admin?`
+    - `Settings`
+    - `Reminder`
+
+### 🧾 Fragments / Pages
+
+#### 1. **Item Page**
+- Shows a **search bar**, **category filter**, and **cart option**
+- Displays a list of available items
+- Users can:
+  - Search items by name or category
+  - Select items to add to their cart
+
+#### 2. **Add Page**
+- Not all items may be listed by default
+- Users can **contribute new items**
+- Adding an item **costs 25 credits**
+- Submitted items appear on the **Item Page** after **admin approval**
+
+#### 3. **All List Page**
+- Shows all previously created shopping lists
+- Includes:
+  - **Creation time and date**
+  - **Bazar name**
+  - **Total cost** of the selected items
+
+#### 4. **Profile Page**
+- Displays **user information and details**
+
+---
+
+## 🧪 Technology Stack
+
+- **Frontend (Android App)**: Java
+- **Backend**: Spring Boot (Java Full Stack)
+- **Database**: PostgreSQL
+
+---
+
+## 📦 Installation
+
+To use the app:
+
+1. Visit the [official installation page](https://soumen-android.netlify.app/)
+2. Download the APK file and install it on your Android device
+
+---
+
+## 👤 Author
+
+Created by **Soumen Maity**
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License – see the `LICENSE` file for details.
+
