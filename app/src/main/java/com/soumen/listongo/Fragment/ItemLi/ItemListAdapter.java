@@ -2,6 +2,7 @@ package com.soumen.listongo.Fragment.ItemLi;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,11 +26,13 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.Produc
     private List<ProductListModel> productList;
     static String api_url;
     static Context context;
+    static int credit;
 
-    public ItemListAdapter(Context context, List<ProductListModel> productList, String api_url) {
+    public ItemListAdapter(Context context, List<ProductListModel> productList, String api_url,int credit) {
         this.productList = productList;
         this.api_url = api_url;
         this.context = context;
+        this.credit=credit;
     }
 
     public static class ProductViewHolder extends RecyclerView.ViewHolder {
@@ -62,14 +65,32 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.Produc
                     .error(R.drawable.fruit)
                     .into(itemImage);
 
-            itemList.setOnClickListener(view -> {
-                BottomSheetDialogModel product = new BottomSheetDialogModel();
-                product.imageResId = product.getImageResId();
-                product.title = ProductListModel.getTitle();
-                product.description = ProductListModel.getDescription();
-                product.price = String.valueOf(ProductListModel.getPrice());
-                showBottomSheet(context, product,ProductListModel.getId());
+            itemList.setOnLongClickListener(view -> {
+                        BottomSheetDialogModel product = new BottomSheetDialogModel();
+                        product.imageResId = product.getImageResId();
+                        product.title = ProductListModel.getTitle();
+                        product.description = ProductListModel.getDescription();
+                        product.price = String.valueOf(ProductListModel.getPrice());
+                        showBottomSheet(context, product, ProductListModel.getId());
+                        return true;
+                    }
+            );
+            itemList.setOnClickListener(v -> {
+                Intent viewActivity = new Intent(context, ItemViewActivity.class);
+                viewActivity.putExtra("id", ProductListModel.getId());
+                viewActivity.putExtra("title", ProductListModel.getTitle());
+                viewActivity.putExtra("price", ProductListModel.getPrice());
+                viewActivity.putExtra("description", ProductListModel.getDescription());
+                viewActivity.putExtra("category",ProductListModel.getCategory());
+                viewActivity.putExtra("credit",credit);
+
+                // Pass image URL as string
+                String fullImageUrl2 = api_url + "/list-on-go/product/image/" + ProductListModel.getId();
+                viewActivity.putExtra("image_url", fullImageUrl2);
+
+                context.startActivity(viewActivity);
             });
+
 
             btnAdd.setOnClickListener(v -> {
                 ProductListModel product = ProductListModel;
@@ -86,8 +107,6 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.Produc
                         db.cartDao().insert(cartModel);
                     }
                     ((Activity) context).runOnUiThread(() -> {
-                        btnAdd.setEnabled(false);
-                        btnAdd.setText("Carted");
                         if (existing == null) {
                             Toast.makeText(context, "Added to cart", Toast.LENGTH_SHORT).show();
                         }
@@ -117,7 +136,7 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.Produc
         return productList.size();
     }
 
-    private static void showBottomSheet(Context context, BottomSheetDialogModel product,Long id) {
+    private static void showBottomSheet(Context context, BottomSheetDialogModel product, Long id) {
         BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(context);
         View view = LayoutInflater.from(context).inflate(R.layout.bottom_sheet_dialog, null);
 
@@ -126,7 +145,7 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.Produc
         TextView descText = view.findViewById(R.id.description_text);
         TextView priceText = view.findViewById(R.id.price_text);
 
-        String fullImageUrl = api_url + "/list-on-go/product/image/" +id;
+        String fullImageUrl = api_url + "/list-on-go/product/image/" + id;
         Glide.with(context)
                 .load(fullImageUrl)
                 .centerCrop()

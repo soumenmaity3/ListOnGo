@@ -86,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
                 if (isAdmin2) {
                     Intent intent = new Intent(MainActivity.this, AdminActivity.class);
                     intent.putExtra("UserId", userId);
+                    intent.putExtra("email",email);
                     startActivity(intent);
                 } else {
                     new AlertDialog.Builder(MainActivity.this)

@@ -32,7 +32,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class CartActivity extends AppCompatActivity {
+public class
+CartActivity extends AppCompatActivity {
 
     private RecyclerView cartList;
     private CartItemAdapter adapter;

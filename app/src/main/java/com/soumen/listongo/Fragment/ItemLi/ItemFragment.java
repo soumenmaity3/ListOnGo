@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -174,23 +175,35 @@ public class ItemFragment extends Fragment {
                 String inputText = searchLayout.getText().toString().trim().toLowerCase();
 
                 if (!inputText.isEmpty()) {
-                    Toast.makeText(getContext(), "You searched: " + inputText, Toast.LENGTH_SHORT).show();
-                    getProductByTitle(inputText);
+
+                    // Decide which method to use
+                    if (inputText.startsWith("title:")) {
+                        String title = inputText.replaceFirst("title:", "").trim();
+                        if (!title.isEmpty()) {
+                            getProductByTitle(title);
+                        } else {
+                            Toast.makeText(getContext(), "Please enter a title after 'title:'", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        searchByKeyword(inputText);
+                    }
+
                 } else {
                     Toast.makeText(getContext(), "Please enter something", Toast.LENGTH_SHORT).show();
                 }
 
-                return true; // consume the event
+                return true;
             }
             return false;
         });
+
         sidebar.setAdapter(sidebarAdapter);
 
 
         // RecyclerView for product list
         recyclerView = view.findViewById(R.id.itemRecycleList);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new ItemListAdapter(getContext(), productList, api_url);
+        adapter = new ItemListAdapter(getContext(), productList, api_url,credit);
         recyclerView.setAdapter(adapter);
 
         fetchProducts();
@@ -300,4 +313,31 @@ public class ItemFragment extends Fragment {
             }
         });
     }
+
+    public void searchByKeyword(String keyword){
+        itemProgress.setVisibility(View.VISIBLE);
+        ApiService apiService=ApiClient.getInstance().create(ApiService.class);
+        Call<List<ProductListModel>> searchKeyword=apiService.searchKeyword(keyword);
+        searchKeyword.enqueue(new Callback<List<ProductListModel>>() {
+            @Override
+            public void onResponse(Call<List<ProductListModel>> call, Response<List<ProductListModel>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    productList.clear();
+                    productList.addAll(response.body());
+                    adapter.notifyDataSetChanged();
+                    itemProgress.setVisibility(GONE);
+                } else {
+                    Toast.makeText(getContext(), "Failed to fetch products", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<ProductListModel>> call, Throwable throwable) {
+                Toast.makeText(getContext(),"Error"+throwable,Toast.LENGTH_SHORT).show();
+                Log.d("Keyword Error", String.valueOf(throwable));
+                itemProgress.setVisibility(GONE);
+            }
+        });
+    }
+
 }

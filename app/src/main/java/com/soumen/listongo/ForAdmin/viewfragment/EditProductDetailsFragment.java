@@ -44,24 +44,24 @@ public class EditProductDetailsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_edit_product_details, container, false);
         edtRecycler = view.findViewById(R.id.edtRecycler);
         editSwipe=view.findViewById(R.id.editSwipe);
-        Long userId = getArguments().getLong("UserId");
+        String userEmail = getArguments().getString("email");
         String image_url = getString(R.string.server_api);
         arrayList = new ArrayList<>();
         adapter = new EditProductAdapter(getContext(), arrayList, image_url);
         edtRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
         edtRecycler.setAdapter(adapter);
-        if (userId != -1) {
-            fetchForEdit(userId);
-            editSwipe.setOnRefreshListener(()->fetchForEdit(userId));
+        if (!userEmail.isEmpty()) {
+            fetchForEdit(userEmail);
+            editSwipe.setOnRefreshListener(()->fetchForEdit(userEmail));
         } else {
             Toast.makeText(getContext(), "User ID not found", Toast.LENGTH_SHORT).show();
         }
         return view;
     }
 
-    private void fetchForEdit(Long userId) {
+    private void fetchForEdit(String userEmail) {
         ApiService apiService = ApiClient.getInstance().create(ApiService.class);
-        Call<List<AdminProductModel>> approveByU = apiService.approveProduct(userId);
+        Call<List<AdminProductModel>> approveByU = apiService.approveProduct(userEmail);
         approveByU.enqueue(new Callback<List<AdminProductModel>>() {
             @Override
             public void onResponse(Call<List<AdminProductModel>> call, Response<List<AdminProductModel>> response) {

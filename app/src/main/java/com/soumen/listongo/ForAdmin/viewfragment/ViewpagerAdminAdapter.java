@@ -10,9 +10,11 @@ import androidx.fragment.app.FragmentPagerAdapter;
 
 public class ViewpagerAdminAdapter extends FragmentPagerAdapter {
     Long userId;
-    public ViewpagerAdminAdapter(@NonNull FragmentManager fm,Long userId) {
+    String email;
+    public ViewpagerAdminAdapter(@NonNull FragmentManager fm,Long userId,String email) {
         super(fm);
         this.userId=userId;
+        this.email=email;
     }
 
 
@@ -26,20 +28,24 @@ public class ViewpagerAdminAdapter extends FragmentPagerAdapter {
             case 1:
                 fragment = new ApproveByYouFragment();
                 break;
+            case 2:
+                fragment = new EditProductDetailsFragment();
+                break;
             default:
-                fragment = new EditProductDetailsFragment(); // fallback
+                fragment=new ReqAdminFragment();
         }
 
         // Pass userId to the fragment
         Bundle bundle = new Bundle();
         bundle.putLong("UserId", userId);
+        bundle.putString("email",email);
         fragment.setArguments(bundle);
         return fragment;
     }
 
     @Override
     public int getCount() {
-        return 3;
+        return 4;
     }
 
 
@@ -49,8 +55,10 @@ public class ViewpagerAdminAdapter extends FragmentPagerAdapter {
             return "Pending List";
         }else if (position==1){
             return "Approve By You";
-        }else {
+        }else if(position==2) {
             return "Edit Product";
+        }else {
+            return "Admin List";
         }
     }
 }

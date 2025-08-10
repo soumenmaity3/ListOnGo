@@ -10,6 +10,7 @@ public class ProductListModel {
     private boolean adminApprove;
     private int quantity = 1;
 
+
     public ProductListModel(Long id, String title, String description, String imageUrl, double price, String category, boolean adminApprove) {
         this.id = id;
         this.title = title;

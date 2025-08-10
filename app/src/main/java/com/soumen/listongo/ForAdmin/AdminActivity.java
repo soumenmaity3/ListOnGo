@@ -3,6 +3,7 @@ package com.soumen.listongo.ForAdmin;
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.*;
 
 import androidx.activity.EdgeToEdge;
@@ -74,7 +75,8 @@ public class AdminActivity extends AppCompatActivity {
 
 
         Long userId = getIntent().getLongExtra("UserId", 0);
-        ViewpagerAdminAdapter viewpagerAdminAdapter = new ViewpagerAdminAdapter(getSupportFragmentManager(), userId);
+        String adEmail=getIntent().getStringExtra("email");
+        ViewpagerAdminAdapter viewpagerAdminAdapter = new ViewpagerAdminAdapter(getSupportFragmentManager(), userId,adEmail);
         viewPager.setAdapter(viewpagerAdminAdapter);
         tab.setupWithViewPager(viewPager);
 

@@ -22,6 +22,9 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".Fragment.ItemLi.ItemViewActivity"
+            android:exported="false" />
+        <activity
             android:name=".ForAdmin.ReqForMakeAdmin.PayForAdminActivity"
             android:exported="false" />
         <activity
@@ -87,9 +90,11 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+
         <receiver
             android:name=".ReminderWorker"
-            android:exported="true" />
+            android:exported="true"
+            tools:ignore="Instantiatable" />
     </application>
 
 </manifest>

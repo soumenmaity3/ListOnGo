@@ -47,15 +47,16 @@ public class ApproveByYouFragment extends Fragment {
         recycleApprove = view.findViewById(R.id.recycleApprove);
         approveSwipe = view.findViewById(R.id.approveSwipe);
         arrayList = new ArrayList<>();
-        Long userId = getArguments().getLong("UserId");
+        String userEmail = getArguments().getString("email");
+        Log.d("AdminEmail", userEmail);
         String image_url = getString(R.string.server_api);
-        adapter = new AdminListAdapter(arrayList, getContext(), userId, image_url);
+        adapter = new AdminListAdapter(arrayList, getContext(), userEmail, image_url);
         recycleApprove.setLayoutManager(new LinearLayoutManager(getContext()));
         recycleApprove.setAdapter(adapter);
 
-        if (userId != -1) {
-            approveList(userId);
-            approveSwipe.setOnRefreshListener(() -> approveList(userId));
+        if (!userEmail.isEmpty()) {
+            approveList(userEmail);
+            approveSwipe.setOnRefreshListener(() -> approveList(userEmail));
         } else {
             Toast.makeText(getContext(), "User ID not found", Toast.LENGTH_SHORT).show();
         }
@@ -63,9 +64,9 @@ public class ApproveByYouFragment extends Fragment {
     }
 
 
-    private void approveList(Long userId) {
+    private void approveList(String userEmail) {
         ApiService apiService = ApiClient.getInstance().create(ApiService.class);
-        Call<List<AdminProductModel>> approveByU = apiService.approveProduct(userId);
+        Call<List<AdminProductModel>> approveByU = apiService.approveProduct(userEmail);
         approveByU.enqueue(new Callback<List<AdminProductModel>>() {
             @Override
             public void onResponse(Call<List<AdminProductModel>> call, Response<List<AdminProductModel>> response) {

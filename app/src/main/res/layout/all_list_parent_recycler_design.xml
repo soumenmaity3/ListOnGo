@@ -4,8 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="12dp"
-    card_view:cardCornerRadius="12dp"
-    card_view:cardElevation="6dp">
+    card_view:cardCornerRadius="16dp"
+    card_view:cardElevation="8dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -13,22 +13,29 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- Title Row -->
+        <!-- Title -->
         <TextView
             android:id="@+id/textTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Item Title"
-            android:textSize="18sp"
+            android:textSize="20sp"
             android:textStyle="bold"/>
+
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="#EEEEEE" />
 
         <!-- Info Row -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="8dp"
-            android:gravity="start">
+            android:gravity="center_vertical">
 
             <TextView
                 android:id="@+id/textQuantity"
@@ -36,26 +43,26 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Quantity: 2"
-                android:textSize="14sp"/>
+                android:textSize="15sp"/>
 
             <TextView
                 android:id="@+id/textTotalPrice"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Total: ₹200"
-                android:textSize="14sp"
-                android:gravity="end" />
+                android:text="₹200"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#4CAF50" />
         </LinearLayout>
 
-        <!-- Price Line -->
+        <!-- Price per Item -->
         <TextView
             android:id="@+id/priceText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Price per item: ₹100"
             android:textSize="14sp"
-            android:layout_marginTop="6dp" />
+            android:layout_marginTop="8dp" />
 
     </LinearLayout>
 

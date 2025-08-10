@@ -1,6 +1,7 @@
 package com.soumen.listongo;
 
 import com.soumen.listongo.ForAdmin.AdminProductModel;
+import com.soumen.listongo.ForAdmin.viewfragment.RequestAdminModel;
 import com.soumen.listongo.ForCart.ForAllListModel;
 import com.soumen.listongo.Fragment.AllListF.AllListFragmentModel;
 import com.soumen.listongo.Fragment.ItemLi.ProductListModel;
@@ -48,7 +49,7 @@ public interface ApiService {
     @PUT("product/make-for-user")
     Call<ResponseBody> makeUserProduct(
             @Query("imaId") Long id,
-            @Query("adminId") Long adminId
+            @Query("adminEmail") String adminEmail
     );
 
     @GET("user/isAdmin")
@@ -92,8 +93,8 @@ public interface ApiService {
             @Query("password") String password
     );
 
-    @GET("product/approve/{id}")
-    Call<List<AdminProductModel>> approveProduct(@Path("id") Long userId);
+    @GET("product/approve/{Email}")
+    Call<List<AdminProductModel>> approveProduct(@Path("Email") String userEmail);
 
     @GET("product/get-filter-product")
     Call<List<ProductListModel>> getProductByNickname(
@@ -130,8 +131,8 @@ public interface ApiService {
     @GET("user/send-link")
     Call<ResponseBody> sendLink(@Query("email") String email);
 
-    @GET("user/admin-email")
-    Call<ResponseBody> congEmail(@Query("email") String email);
+//    @GET("user/admin-email")
+//    Call<ResponseBody> congEmail(@Query("email") String email);
 
     @PUT("user/request-admin")
     Call<ResponseBody> reqForAdmin(@Body Map<String, String> payload);
@@ -140,8 +141,20 @@ public interface ApiService {
     Call<ResponseBody> getCoin(@Query("email") String email);
 
     @PUT("user/buy-credit")
-    Call<ResponseBody> buyCredit(@Query("email") String email, @Query("credit") Integer credit);
+    Call<Integer> buyCredit(@Query("email") String email, @Query("credit") Integer credit);
 
     @POST("user/cost-credit")
     Call<ResponseBody> costCredit(@Query("email") String email, @Query("cost") int cost);
+    @GET("product/keyword")
+    Call<List<ProductListModel>> searchKeyword(@Query("keyword") String keyword);
+
+    @GET("user/pen-req")
+    Call<List<RequestAdminModel>> pendingRequest();
+
+
+    @PUT("user/approve-admin")
+    Call<ResponseBody>approveAdmin(@Query("approve")boolean isApprove,
+                                   @Query("adEmail")String adEmail,
+                                   @Query("userEmail") String userEmail,
+                                   @Query("reason")String reason);
 }

@@ -28,13 +28,13 @@ import retrofit2.Response;
 public class AdminListAdapter extends RecyclerView.Adapter<AdminListAdapter.viewHolder> {
     ArrayList<AdminProductModel> arrayList;
     Context context;
-    Long adminId;
+    String adminEmail;
     String image_url;
 
-    public AdminListAdapter(ArrayList<AdminProductModel> arrayList, Context context, Long adminId,String image_url) {
+    public AdminListAdapter(ArrayList<AdminProductModel> arrayList, Context context, String adminEmail,String image_url) {
         this.arrayList = arrayList;
         this.context = context;
-        this.adminId = adminId;
+        this.adminEmail = adminEmail;
         this.image_url=image_url;
     }
 
@@ -59,7 +59,7 @@ public class AdminListAdapter extends RecyclerView.Adapter<AdminListAdapter.view
                 .into(holder.imgProduct);
         holder.btnActive.setOnClickListener(v -> {
             ApiService apiService = ApiClient.getInstance().create(ApiService.class);
-            Call<ResponseBody> makeUser = apiService.makeUserProduct(model.getId(), adminId);
+            Call<ResponseBody> makeUser = apiService.makeUserProduct(model.getId(), adminEmail);
             makeUser.enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {

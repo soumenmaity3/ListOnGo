@@ -11,10 +11,14 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.materialswitch.MaterialSwitch;
 import com.google.android.material.textfield.MaterialAutoCompleteTextView;
@@ -32,6 +36,8 @@ import com.soumen.listongo.R;
 import com.soumen.listongo.SignUpActivity;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -52,11 +58,12 @@ import retrofit2.Response;
 
 public class SettingsActivity extends AppCompatActivity {
     private static final int REQUEST_CODE = 1000;
-    private static final int PLAN_REQUEST_CODE =1001 ;
+    private static final int PLAN_REQUEST_CODE = 1001;
     MaterialButton btnContact, btnPrivacy, btnAbout, btnFeedback, btnDelete, btnLogout, btnClear, btnBuyCredit;
-    String email,coinValue,selectedPlan;
+    String email, coinValue, selectedPlan;
     private TextInputEditText dChoosePlan;
     private Dialog creditDialog;
+    private ActivityResultLauncher<Intent> launcher;
 
 
     @SuppressLint({"MissingInflatedId", "WrongViewCast"})
@@ -102,28 +109,42 @@ public class SettingsActivity extends AppCompatActivity {
             MaterialButton dCreditChoose = creditDialog.findViewById(R.id.choosePlanButton);
             MaterialButton dPay = creditDialog.findViewById(R.id.submitButton);
 
-            dEditEmail.setText(email); // optional: set from your stored email
+            dEditEmail.setText(email);
 
             dCreditChoose.setOnClickListener(vi -> {
                 Intent intent = new Intent(SettingsActivity.this, PlaneListActivity.class);
                 startActivityForResult(intent, PLAN_REQUEST_CODE);
             });
 
-             boolean isAdminReq=false;
+            boolean isAdminReq = false;
+            String email2 = dEditEmail.getText().toString();
 
-            dPay.setOnClickListener(vi->{
-                Intent intent=new Intent(SettingsActivity.this, PayForAdminActivity.class);
-                intent.putExtra("email",email);
-                intent.putExtra("email",email);
-                intent.putExtra("coin_value",coinValue.trim());
-                intent.putExtra("isAdminReq",isAdminReq);
-                startActivity(intent);
+            dPay.setOnClickListener(vi -> {
+                if (email2.isEmpty() || dChoosePlan.getText().toString().isEmpty()) {
+                    Toast.makeText(this, "Fill All", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+ 
+                Intent intent = new Intent(SettingsActivity.this, PayForAdminActivity.class);
+                intent.putExtra("email", email2.trim());
+                intent.putExtra("coin_value", coinValue.trim());
+                intent.putExtra("isAdminReq", isAdminReq);
+                launcher.launch(intent);
                 creditDialog.dismiss();
             });
 
             creditDialog.show();
         });
 
+        launcher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                        boolean shouldShowDialog = result.getData().getBooleanExtra("SHOW_DIALOG", false);
+                        showBottomSheetDialog(shouldShowDialog);
+                    }
+                }
+        );
 
 
         PackageInfo packageInfo = null;
@@ -409,6 +430,7 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -418,9 +440,33 @@ public class SettingsActivity extends AppCompatActivity {
 
             // Update the dialog's credit input if dialog is still open
             if (creditDialog != null && creditDialog.isShowing() && dChoosePlan != null) {
-                dChoosePlan.setText(selectedPlan + " for " + coinValue+" coins");
+                dChoosePlan.setText(selectedPlan + " for " + coinValue + " coins");
             }
         }
     }
+
+    private void showBottomSheetDialog(boolean isSuccess) {
+        BottomSheetDialog dialog = new BottomSheetDialog(SettingsActivity.this);
+        View view = LayoutInflater.from(this).inflate(R.layout.payment_bottom_dialog, null);
+
+        // These should be called after inflating the view
+        MaterialTextView textSuccess = view.findViewById(R.id.payStatus);
+        LottieAnimationView payLotti = view.findViewById(R.id.payAnim);
+
+        // Set values based on success/failure
+        if (isSuccess) {
+            textSuccess.setText("Payment Successful");
+            payLotti.setAnimation(R.raw.pay_done);
+        } else {
+            textSuccess.setText("Payment Failed");
+            payLotti.setAnimation(R.raw.payment_failed);
+        }
+
+        payLotti.playAnimation(); // Optional: Play the animation
+        dialog.setContentView(view);
+        dialog.show();
+    }
+
+
 
 }

@@ -5,6 +5,7 @@ import static android.view.View.VISIBLE;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.widget.*;
@@ -25,6 +26,8 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.material.button.MaterialButton;
 import com.soumen.listongo.SettingActivity.SettingsUtil;
+
+import java.net.URLEncoder;
 
 public class LoadingActivity extends AppCompatActivity {
     String api;
@@ -61,6 +64,10 @@ ImageView serverError;
             serverOnOrOf();
         });
 
+        btnRequest.setOnClickListener(v->{
+            sendWhatsAppMessage("+91 8609360653","Please make server online I want to use your app.");
+        });
+
     }
     public void serverOnOrOf(){
         new Handler().postDelayed(new Runnable() {
@@ -91,4 +98,18 @@ ImageView serverError;
             }
         },1000);
     }
+
+    public void sendWhatsAppMessage(String number, String message) {
+        try {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            String url = "https://wa.me/" + number + "?text=" + URLEncoder.encode(message, "UTF-8");
+            intent.setData(Uri.parse(url));
+            intent.setPackage("com.whatsapp");
+            startActivity(intent);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "WhatsApp not installed", Toast.LENGTH_SHORT).show();
+        }
+    }
+
 }
