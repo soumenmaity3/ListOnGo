@@ -39,7 +39,7 @@ public class ReqAdminFragment extends Fragment {
     SwipeRefreshLayout swipeReqAdmin;
 
     public ReqAdminFragment() {
-        // Required empty public constructor
+
     }
 
 
