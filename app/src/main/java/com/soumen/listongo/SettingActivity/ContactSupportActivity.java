@@ -51,5 +51,12 @@ public class ContactSupportActivity extends AppCompatActivity {
             intent.setData(Uri.parse(url));
             startActivity(intent);
         });
+        TextView webApp=findViewById(R.id.webApp);
+        webApp.setOnClickListener(v->{
+            String url="https://listongo-soumen.netlify.app/";
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse(url));
+            startActivity(intent);
+        });
     }
 }

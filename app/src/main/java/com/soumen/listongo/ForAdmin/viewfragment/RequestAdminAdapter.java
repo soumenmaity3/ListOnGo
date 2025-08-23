@@ -2,6 +2,7 @@ package com.soumen.listongo.ForAdmin.viewfragment;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,7 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.soumen.listongo.ApiClient;
 import com.soumen.listongo.ApiService;
+import com.soumen.listongo.ForAdmin.ReqAdminDetailsActivity;
 import com.soumen.listongo.Fragment.ItemLi.SidebarAdapter;
 import com.soumen.listongo.R;
 
@@ -52,6 +54,15 @@ public class RequestAdminAdapter extends RecyclerView.Adapter<RequestAdminAdapte
         holder.userEmail.setText("Email: " + model.getEmail());
         holder.userReason.setText("Reason: " + model.getAdminReason());
 
+        holder.viewHistory.setOnClickListener(v -> {
+            Intent intent=new Intent(context, ReqAdminDetailsActivity.class);
+            intent.putExtra("userEmail",model.getEmail());
+            intent.putExtra("userId",model.getId());
+            intent.putExtra("userReason",model.getAdminReason());
+            intent.putExtra("adminEmail",adEmail);
+            context.startActivity(intent);
+        });
+
         holder.approveBtn.setOnClickListener(v -> {
             ApiService apiService = ApiClient.getInstance().create(ApiService.class);
             Call<ResponseBody> approve = apiService.approveAdmin(true, adEmail, model.getEmail(), model.getAdminReason());
@@ -88,7 +99,6 @@ public class RequestAdminAdapter extends RecyclerView.Adapter<RequestAdminAdapte
                 }
 
                 ApiService apiService = ApiClient.getInstance().create(ApiService.class);
-                // ✅ Corrected: use typed reason instead of model.getAdminReason()
                 Call<ResponseBody> deny = apiService.approveAdmin(false, adEmail, model.getEmail(), reason);
 
                 deny.enqueue(new Callback<ResponseBody>() {
@@ -119,7 +129,8 @@ public class RequestAdminAdapter extends RecyclerView.Adapter<RequestAdminAdapte
 
     public class viewHolder extends RecyclerView.ViewHolder {
         TextView userID, userEmail, userReason;
-        MaterialButton denyBtn, approveBtn;
+        MaterialButton denyBtn, approveBtn,viewHistory;
+        LinearLayout reqAdmin;
 
         public viewHolder(@NonNull View itemView) {
             super(itemView);
@@ -128,6 +139,8 @@ public class RequestAdminAdapter extends RecyclerView.Adapter<RequestAdminAdapte
             userReason = itemView.findViewById(R.id.user_reason);
             denyBtn = itemView.findViewById(R.id.btn_deny);
             approveBtn = itemView.findViewById(R.id.btn_approve);
+            reqAdmin=itemView.findViewById(R.id.reqAdmin);
+            viewHistory=itemView.findViewById(R.id.btn_view_history);
 
         }
     }

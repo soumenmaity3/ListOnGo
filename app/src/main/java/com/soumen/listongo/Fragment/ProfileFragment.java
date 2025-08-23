@@ -28,6 +28,8 @@ import com.soumen.listongo.R;
 import com.soumen.listongo.ForAdmin.ReqForMakeAdmin.ReqForAdminActivity;
 import com.soumen.listongo.SettingActivity.SettingsActivity;
 
+import java.io.IOException;
+
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -37,7 +39,10 @@ import retrofit2.Response;
 public class ProfileFragment extends Fragment {
     public ProfileFragment() {
     }
+
     private ActivityResultLauncher<Intent> launcher;
+    MaterialButton reqAdmin;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -47,17 +52,13 @@ public class ProfileFragment extends Fragment {
         TextView userid = view.findViewById(R.id.text_user_id);
         TextView email = view.findViewById(R.id.text_email);
         MaterialButton logoutButton = view.findViewById(R.id.button_logout);
-        MaterialButton reqAdmin = view.findViewById(R.id.button_req_for_admin);
+         reqAdmin = view.findViewById(R.id.button_req_for_admin);
 
         Long id = getArguments().getLong("UserId");
         String userName = getArguments().getString("UserName");
         String userEmail = getArguments().getString("email");
-        boolean isAdmin = getArguments().getBoolean("isAdmin");
 
-        if (isAdmin) {
-            reqAdmin.setVisibility(GONE);
-        }
-
+        checkStatus(userEmail);
         reqAdmin.setOnClickListener(v -> {
             AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
             dialog.setTitle("Option")
@@ -112,6 +113,7 @@ public class ProfileFragment extends Fragment {
         );
         return view;
     }
+
     private void showBottomSheetDialog(boolean isSuccess) {
         BottomSheetDialog dialog = new BottomSheetDialog(getContext());
         View view = LayoutInflater.from(getContext()).inflate(R.layout.payment_bottom_dialog, null);
@@ -134,4 +136,36 @@ public class ProfileFragment extends Fragment {
         dialog.show();
     }
 
+    public void checkStatus(String email){
+        ApiService apiService = ApiClient.getInstance().create(ApiService.class);
+        Call<ResponseBody> adminCheck=apiService.adminStatus(email);
+        adminCheck.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    try {
+                        String result = response.body().string().trim();
+                        if (result.equals("requested")) {
+                            reqAdmin.setText("Your request is Send Successfully. (Please wait for approve)");
+                            reqAdmin.setEnabled(false);
+                        } else if (result.equals("cancel")) {
+                            reqAdmin.setText("Your request is denied. (Check your email)");
+                            reqAdmin.setEnabled(false);
+                        } else if (result.equals("approved")) {
+                            reqAdmin.setText("Your are now admin.");
+                            reqAdmin.setEnabled(false);
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+
+            }
+        });
+    }
 }

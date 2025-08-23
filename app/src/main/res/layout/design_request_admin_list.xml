@@ -9,6 +9,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:id="@+id/reqAdmin"
         android:orientation="vertical"
         android:padding="16dp">
 
@@ -43,6 +44,16 @@
             android:layout_marginBottom="4dp"
             android:layout_marginTop="12dp"
             android:weightSum="2">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_view_history"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="View History"
+                android:backgroundTint="#FF7200"
+                android:textColor="#ffffff"
+                card_view:cornerRadius="10dp"
+                android:layout_marginEnd="8dp" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_deny"

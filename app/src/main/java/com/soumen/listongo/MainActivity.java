@@ -40,6 +40,7 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
 import com.google.android.material.timepicker.MaterialTimePicker;
 import com.google.android.material.timepicker.TimeFormat;
 
@@ -86,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
                 if (isAdmin2) {
                     Intent intent = new Intent(MainActivity.this, AdminActivity.class);
                     intent.putExtra("UserId", userId);
-                    intent.putExtra("email",email);
+                    intent.putExtra("email", email);
                     startActivity(intent);
                 } else {
                     new AlertDialog.Builder(MainActivity.this)
@@ -97,13 +98,13 @@ public class MainActivity extends AppCompatActivity {
                 }
 
 
-            } else if (v.getItemId()==R.id.setting){
+            } else if (v.getItemId() == R.id.setting) {
                 Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
                 intent.putExtra("userName", userName);
                 intent.putExtra("UserId", userId);
                 intent.putExtra("userEmail", email);
                 startActivity(intent);
-            }else {
+            } else {
                 showTimePickerDialog();
             }
             return true;
@@ -143,11 +144,11 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 String result = null;
                 try {
-                    result = response.body().string();
+                    result = response.body().string().trim();
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
-                isAdmin2 = Boolean.parseBoolean(result.trim());
+                isAdmin2 = Boolean.parseBoolean(result);
 
             }
 
@@ -179,7 +180,7 @@ public class MainActivity extends AppCompatActivity {
         bundle.putLong("UserId", userId);
         bundle.putString("UserName", userName);
         bundle.putBoolean("isAdmin", isAdmin2);
-        bundle.putInt("credit",credit);
+        bundle.putInt("credit", credit);
         fragment.setArguments(bundle);
         if (isList) {
             transaction.add(R.id.nav_host_fragment, fragment);

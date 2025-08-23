@@ -1,6 +1,9 @@
 package com.soumen.listongo;
 
 import com.soumen.listongo.ForAdmin.AdminProductModel;
+import com.soumen.listongo.ForAdmin.ReqAdminDetailsActivity;
+import com.soumen.listongo.ForAdmin.ReqAdminDetailsApproveUserModel;
+import com.soumen.listongo.ForAdmin.ReqAdminDetailsProductModel;
 import com.soumen.listongo.ForAdmin.viewfragment.RequestAdminModel;
 import com.soumen.listongo.ForCart.ForAllListModel;
 import com.soumen.listongo.Fragment.AllListF.AllListFragmentModel;
@@ -157,4 +160,13 @@ public interface ApiService {
                                    @Query("adEmail")String adEmail,
                                    @Query("userEmail") String userEmail,
                                    @Query("reason")String reason);
+
+    @GET("user/admin-req-status")
+    Call<ResponseBody>adminStatus(@Query("email") String email);
+
+    @GET("product/by/{id}")
+    Call<List<ReqAdminDetailsProductModel>> addByThis(@Path("id") Long id);
+
+    @GET("user/admin-approve-by-/{email}")
+    Call<List<ReqAdminDetailsApproveUserModel>>approveByThisUser(@Path("email")String email);
 }
