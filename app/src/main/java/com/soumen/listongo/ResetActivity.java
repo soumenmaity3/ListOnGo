@@ -41,7 +41,8 @@ MaterialButton btnResetDone;
 
         btnResetDone.setOnClickListener(v->{
             String password=edtPassword.getText().toString();
-            if (password != null&&!password.isEmpty()) {
+            String confPass=edtConfPass.getText().toString();
+            if (password != null&&!password.isEmpty()&&confPass != null&&!confPass.isEmpty()) {
                 updatePass(email,password);
             }
             else {

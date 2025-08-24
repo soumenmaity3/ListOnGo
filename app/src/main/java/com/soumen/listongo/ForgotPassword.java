@@ -4,11 +4,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
-import android.view.View;
-import android.widget.LinearLayout;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ViewFlipper;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,6 +15,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.textfield.TextInputEditText;
 import com.soumen.listongo.SettingActivity.SettingsUtil;
 
@@ -29,12 +28,13 @@ import retrofit2.Response;
 
 public class ForgotPassword extends AppCompatActivity {
 
-    private RadioGroup radioGroup;
-    private RadioButton radioOldPassword, radioOtp;
-    private LinearLayout layoutOldPassword, layoutOtp;
+    private MaterialButtonToggleGroup toggleGroup;
+    private ViewFlipper passwordSwitcher;
     private MaterialButton btnForgot, btnGetOtp;
-    TextInputEditText editTextEmail, editTextOtp,editTextPassword;
-    String storeOTP;
+    private TextInputEditText editTextEmail, editTextOtp, editTextPassword;
+    private TextView txtLogin;
+
+    private String storeOTP;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,64 +43,54 @@ public class ForgotPassword extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_forgot_password);
 
-        // Apply padding for edge-to-edge
+        // Edge-to-edge padding
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
 
-        // Initialize views
-        radioGroup = findViewById(R.id.radioGroup);
-        radioOldPassword = findViewById(R.id.radio_old_password);
-        radioOtp = findViewById(R.id.radio_otp);
-        layoutOldPassword = findViewById(R.id.layout_old_password);
-        layoutOtp = findViewById(R.id.layout_otp);
+        // Initialize Views
+        toggleGroup = findViewById(R.id.toggleGroup);
+        passwordSwitcher = findViewById(R.id.passwordSwitcher);
         btnForgot = findViewById(R.id.btnResetPas);
         btnGetOtp = findViewById(R.id.btnGetOtp);
         editTextEmail = findViewById(R.id.editTextEmail);
         editTextOtp = findViewById(R.id.editTextOtp);
-        editTextPassword=findViewById(R.id.editTextOldPassword);
+        editTextPassword = findViewById(R.id.editTextOldPassword);
+        txtLogin = findViewById(R.id.txtLogin);
 
-        int defaultSelection = R.id.radio_old_password;
+        // Default selection = OTP
+        toggleGroup.check(R.id.btnOtp);
+        passwordSwitcher.setDisplayedChild(1);
 
-        radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
-            if (checkedId != defaultSelection) {
-                Log.d("RadioChange", "User changed selection from default.");
-                // Optionally update the default selection
-                // defaultSelection = checkedId;
-            }
-
-            if (checkedId == R.id.radio_old_password) {
-                layoutOldPassword.setVisibility(View.VISIBLE);
-                layoutOtp.setVisibility(View.GONE);
-                editTextOtp.setEnabled(false);
-                editTextPassword.setEnabled(true);
-            } else if (checkedId == R.id.radio_otp) {
-                layoutOldPassword.setVisibility(View.GONE);
-                layoutOtp.setVisibility(View.VISIBLE);
-                editTextOtp.setEnabled(true);
-                editTextPassword.setEnabled(false);
+        // Toggle between Old Password / OTP
+        toggleGroup.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
+            if (isChecked) {
+                if (checkedId == R.id.btnPassword) {
+                    passwordSwitcher.setDisplayedChild(0); // Show Old Password
+                } else if (checkedId == R.id.btnOtp) {
+                    passwordSwitcher.setDisplayedChild(1); // Show OTP
+                }
             }
         });
 
-        radioOtp.setChecked(true);
+        // Get OTP
         btnGetOtp.setOnClickListener(v -> {
-            String email = editTextEmail.getText().toString();
-            Log.d("OTPEmail", email);
-            if (email == null || email.isEmpty()) {
+            String email = editTextEmail.getText().toString().trim();
+            if (email.isEmpty()) {
                 editTextEmail.setError("Enter email first.");
                 return;
             }
             generateOtp();
             sendAndStore(email, storeOTP);
-            btnGetOtp.setEnabled(false);
-            new CountDownTimer(15000,1000){
 
+            // Disable button for 15s
+            btnGetOtp.setEnabled(false);
+            new CountDownTimer(15000, 1000) {
                 @Override
                 public void onTick(long l) {
-                    btnGetOtp.setText("Wait: "+l/1000+" s");
-                    btnGetOtp.setEnabled(false);
+                    btnGetOtp.setText("Wait: " + l / 1000 + "s");
                 }
 
                 @Override
@@ -110,35 +100,61 @@ public class ForgotPassword extends AppCompatActivity {
                 }
             }.start();
         });
+
+        // Reset Password
         btnForgot.setOnClickListener(v -> {
-            String email = editTextEmail.getText().toString();
-            String otp = editTextOtp.getText().toString();
-            checkOtp(email, otp);
+            String email = editTextEmail.getText().toString().trim();
+
+            if (toggleGroup.getCheckedButtonId() == R.id.btnPassword) {
+                // Old password path
+                String oldPassword = editTextPassword.getText().toString().trim();
+                if (oldPassword.isEmpty()) {
+                    editTextPassword.setError("Enter old password");
+                    return;
+                }
+                // TODO: Call your API to verify old password
+                Toast.makeText(this, "Proceed with old password flow", Toast.LENGTH_SHORT).show();
+
+            } else {
+                // OTP path
+                String otp = editTextOtp.getText().toString().trim();
+                if (otp.isEmpty()) {
+                    editTextOtp.setError("Enter OTP");
+                    return;
+                }
+                checkOtp(email, otp);
+            }
+        });
+
+        // Back to Login
+        txtLogin.setOnClickListener(v -> {
+            startActivity(new Intent(ForgotPassword.this, SignInActivity.class));
+            finish();
         });
     }
 
-    public void generateOtp() {
+    private void generateOtp() {
         int randomOtp = (int) (Math.random() * 900000) + 100000;
         storeOTP = String.valueOf(randomOtp);
     }
 
-    public void sendAndStore(String email, String otp) {
+    private void sendAndStore(String email, String otp) {
         ApiService apiService = ApiClient.getInstance().create(ApiService.class);
         Call<ResponseBody> sendStore = apiService.sendAndStoreOTP(otp, email);
         sendStore.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                Toast.makeText(ForgotPassword.this, "Send Successful", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ForgotPassword.this, "OTP sent successfully", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable throwable) {
-                Toast.makeText(ForgotPassword.this, "Have an error", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ForgotPassword.this, "Failed to send OTP", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    public void checkOtp(String email, String otp) {
+    private void checkOtp(String email, String otp) {
         ApiService apiService = ApiClient.getInstance().create(ApiService.class);
         Call<ResponseBody> check = apiService.checkOtp(email, otp);
 
@@ -147,13 +163,12 @@ public class ForgotPassword extends AppCompatActivity {
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     try {
-                        String result = response.body().string(); // Read response safely
+                        String result = response.body().string();
                         boolean isMatched = Boolean.parseBoolean(result);
 
                         if (isMatched) {
-                            // OTP matched, proceed to useOTP
-                            Call<ResponseBody> useThis = apiService.useOTP(email);
-                            useThis.enqueue(new Callback<ResponseBody>() {
+                            // OTP matched → call useOTP API
+                            apiService.useOTP(email).enqueue(new Callback<ResponseBody>() {
                                 @Override
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                                     Intent intent = new Intent(ForgotPassword.this, ResetActivity.class);
@@ -167,15 +182,13 @@ public class ForgotPassword extends AppCompatActivity {
                                 }
                             });
                         } else {
-                            // OTP did not match
-                            Toast.makeText(ForgotPassword.this, "OTP not matched", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(ForgotPassword.this, "Invalid OTP", Toast.LENGTH_SHORT).show();
                         }
                     } catch (IOException e) {
-                        e.printStackTrace();
                         Toast.makeText(ForgotPassword.this, "Error reading response", Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Toast.makeText(ForgotPassword.this, "Failed response from checkOtp", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ForgotPassword.this, "Failed to check OTP", Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -185,6 +198,4 @@ public class ForgotPassword extends AppCompatActivity {
             }
         });
     }
-
-
 }
