@@ -124,7 +124,7 @@ public class SettingsActivity extends AppCompatActivity {
                     Toast.makeText(this, "Fill All", Toast.LENGTH_SHORT).show();
                     return;
                 }
- 
+
                 Intent intent = new Intent(SettingsActivity.this, PayForAdminActivity.class);
                 intent.putExtra("email", email2.trim());
                 intent.putExtra("coin_value", coinValue.trim());
@@ -256,7 +256,6 @@ public class SettingsActivity extends AppCompatActivity {
         MaterialSwitch notification = findViewById(R.id.switch_notifications);
         SharedPreferences prefs3 = getSharedPreferences("app_settings", MODE_PRIVATE);
 
-// Load and set saved switch state
         boolean permissionGranted = ContextCompat.checkSelfPermission(
                 this, Manifest.permission.POST_NOTIFICATIONS
         ) == PackageManager.PERMISSION_GRANTED;
@@ -286,7 +285,12 @@ public class SettingsActivity extends AppCompatActivity {
         });
 
 
-        btnLogout.setOnClickListener(v -> startActivity(new Intent(SettingsActivity.this, OptionActivity.class)));
+        btnLogout.setOnClickListener(v -> {
+            Intent intent=new Intent(SettingsActivity.this, OptionActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish();
+        });
 
         btnDelete.setOnClickListener(v -> {
             Dialog dialog = new Dialog(this);
@@ -466,7 +470,6 @@ public class SettingsActivity extends AppCompatActivity {
         dialog.setContentView(view);
         dialog.show();
     }
-
 
 
 }
